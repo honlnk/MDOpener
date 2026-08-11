@@ -63,7 +63,11 @@
   if (window.marked && marked.use) {
     var calloutExt = {
       name: 'callout', level: 'block',
-      start: function (src) { var i = src.indexOf('> [!'); return i < 0 ? undefined : i; },
+      start: function (src) {
+        // 只在行首匹配 > [!（前面是字符串开头或换行），避免误匹配行内代码中的 `> [!xxx]`
+        var m = /(^|\n)([ \t]*> \[!)/.exec(src);
+        return m ? m.index + m[1].length : undefined;
+      },
       tokenizer: function (src) {
         var rule = /^[ \t]*> \[!([a-zA-Z]+)\]([+-]?)[ \t]*([^\n]*)(?:\n((?:[ \t]*> ?[^\n]*\n?)*))?/;
         var m = rule.exec(src);
