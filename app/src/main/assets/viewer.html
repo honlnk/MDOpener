@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MD Opener</title>
+<link id="css-tw" rel="stylesheet" href="typewriter.css">
+<link id="css-hl-light" rel="stylesheet" href="hljs-github.css">
+<link id="css-hl-dark" rel="stylesheet" href="hljs-github-dark.css" disabled>
+<style>
+  pre { overflow: auto; }
+  img { max-width: 100%; height: auto; }
+  img.broken { opacity: 0.25; }
+  mark.md-hit { background: #ffe58a; color: inherit; border-radius: 2px; padding: 0 1px; }
+</style>
+</head>
+<body>
+<div id="content" class="markdown-body"></div>
+<script src="marked.min.js"></script>
+<script src="highlight.min.js"></script>
+<script>
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  if (window.marked && marked.setOptions) {
+    marked.setOptions({ gfm: true, breaks: false });
+  }
+
+  // ---- Obsidian 语法扩展 ----
+  // Lucide 图标（inline SVG，零外网请求）
+  var LUCIDE = {
+    note: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+    todo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>',
+    abstract: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>',
+    tip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>',
+    question: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+    failure: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
+    danger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+    bug: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/></svg>',
+    example: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>',
+    quote: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>'
+  };
+  // 类型别名 → 主类型
+  var CALLOUT_ALIAS = {
+    note: 'note', info: 'info', todo: 'todo',
+    abstract: 'abstract', summary: 'abstract', tldr: 'abstract',
+    tip: 'tip', hint: 'tip', important: 'tip',
+    success: 'success', check: 'success', done: 'success',
+    question: 'question', help: 'question', faq: 'question',
+    warning: 'warning', caution: 'warning', attention: 'warning',
+    failure: 'failure', missing: 'failure', fail: 'failure',
+    danger: 'danger', error: 'danger',
+    bug: 'bug',
+    example: 'example',
+    quote: 'quote', cite: 'quote'
+  };
+
+  if (window.marked && marked.use) {
+    var calloutExt = {
+      name: 'callout', level: 'block',
+      start: function (src) { var i = src.indexOf('> [!'); return i < 0 ? undefined : i; },
+      tokenizer: function (src) {
+        var rule = /^[ \t]*> \[!([a-zA-Z]+)\]([+-]?)[ \t]*([^\n]*)(?:\n((?:[ \t]*> ?[^\n]*\n?)*))?/;
+        var m = rule.exec(src);
+        if (m) {
+          var body = (m[4] || '').replace(/^[ \t]*> ?/gm, '');
+          var fold = m[2] || '';           // '' / '+' / '-'
+          var title = (m[3] && m[3].trim()) || '';
+          var token = {
+            type: 'callout', raw: m[0],
+            calloutType: m[1].toLowerCase(),
+            fold: fold,
+            title: title,
+            tokens: []
+          };
+          this.lexer.blockTokens(body, token.tokens);
+          return token;
+        }
+      },
+      renderer: function (token) {
+        var main = CALLOUT_ALIAS[token.calloutType] || 'note';
+        var icon = LUCIDE[main] || LUCIDE.note;
+        var titleText = token.title || token.calloutType.charAt(0).toUpperCase() + token.calloutType.slice(1);
+        var caretSvg = '<svg class="fold-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+        var titleInner = '<span class="callout-title-inner">' + esc(titleText) + '</span>';
+        var contentHtml = '<div class="callout-content">' + this.parser.parse(token.tokens) + '</div>';
+
+        if (token.fold === '+' || token.fold === '-') {
+          // 可折叠：用原生 details/summary
+          var openAttr = token.fold === '+' ? ' open' : '';
+          var titleHtml = '<div class="callout-title">'
+            + '<span class="callout-icon">' + icon + '</span>'
+            + titleInner + caretSvg + '</div>';
+          return '<details class="callout callout-' + main + ' is-foldable"' + openAttr + ' data-callout="' + token.calloutType + '">'
+            + '<summary class="callout-summary">' + titleHtml + '</summary>'
+            + contentHtml + '</details>\n';
+        }
+        var titleHtml2 = '<div class="callout-title">'
+          + '<span class="callout-icon">' + icon + '</span>'
+          + titleInner + '</div>';
+        return '<div class="callout callout-' + main + '" data-callout="' + token.calloutType + '">'
+          + titleHtml2 + contentHtml + '</div>\n';
+      }
+    };
+
+    var wikilinkExt = {
+      name: 'wikilink', level: 'inline',
+      start: function (src) { var i = src.indexOf('[['); return i < 0 ? undefined : i; },
+      tokenizer: function (src) {
+        var m = /^\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]/.exec(src);
+        if (m) {
+          var page = m[1].trim();
+          var alias = (m[2] || m[1]).trim();
+          return { type: 'wikilink', raw: m[0], page: page, text: alias };
+        }
+      },
+      renderer: function (token) {
+        return '<a class="internal-link" data-page="' + esc(token.page) + '">' + esc(token.text) + '</a>';
+      }
+    };
+
+    var highlightExt = {
+      name: 'highlight', level: 'inline',
+      start: function (src) { var i = src.indexOf('=='); return i < 0 ? undefined : i; },
+      tokenizer: function (src) {
+        var m = /^==([^=\n]+?)==/.exec(src);
+        if (m) return { type: 'highlight', raw: m[0], text: m[1] };
+      },
+      renderer: function (token) { return '<mark>' + esc(token.text) + '</mark>'; }
+    };
+
+    var tagExt = {
+      name: 'tag', level: 'inline',
+      start: function (src) { var i = src.search(/(^|\s)#[\p{L}\p{N}]/u); return i < 0 ? undefined : i; },
+      tokenizer: function (src) {
+        var m = /^(\s?)#([\p{L}\p{N}_/\-]+)/u.exec(src);
+        if (m) return { type: 'tag', raw: m[0], lead: m[1] || '', text: '#' + m[2] };
+      },
+      renderer: function (token) { return (token.lead || '') + '<a class="tag" href="#">' + esc(token.text) + '</a>'; }
+    };
+
+    var embedExt = {
+      name: 'embed', level: 'inline',
+      start: function (src) { var i = src.indexOf('![['); return i < 0 ? undefined : i; },
+      tokenizer: function (src) {
+        var m = /^!\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]/.exec(src);
+        if (m) return { type: 'embed', raw: m[0], page: m[1].trim(), alias: (m[2] || '').trim() };
+      },
+      renderer: function (token) {
+        var label = token.page + (token.alias ? ' · ' + token.alias : '');
+        return '<div class="embed" data-page="' + esc(token.page) + '">📎 嵌入：' + esc(label) + '</div>';
+      }
+    };
+
+    marked.use({ extensions: [calloutExt, wikilinkExt, highlightExt, tagExt, embedExt] });
+  }
+
+  window.setMarkdown = function (md) {
+    try {
+      var el = document.getElementById('content');
+      var html = (window.marked && marked.parse) ? marked.parse(md || '') : (md || '');
+      el.innerHTML = html;
+
+      // 给标题加 id 并收集目录
+      var heads = el.querySelectorAll('h1, h2, h3');
+      var toc = [];
+      heads.forEach(function (h, i) {
+        if (!h.id) h.id = 'h-' + i;
+        toc.push({ id: h.id, text: h.textContent, level: parseInt(h.tagName.substring(1), 10) });
+      });
+      if (window.AndroidBridge && window.AndroidBridge.reportToc) {
+        window.AndroidBridge.reportToc(JSON.stringify(toc));
+      }
+
+      // 代码高亮
+      el.querySelectorAll('pre code').forEach(function (b) {
+        try { if (window.hljs) hljs.highlightElement(b); } catch (e) {}
+      });
+
+      // 相对图片解析（尽力而为）
+      el.querySelectorAll('img').forEach(function (img) {
+        var src = img.getAttribute('src') || '';
+        if (src && !/^(https?:|data:|file:|content:)/i.test(src) && window.AndroidBridge && window.AndroidBridge.resolveImage) {
+          try {
+            var resolved = window.AndroidBridge.resolveImage(src);
+            if (resolved) img.src = resolved; else img.classList.add('broken');
+          } catch (e) { img.classList.add('broken'); }
+        }
+      });
+    } catch (e) {
+      document.getElementById('content').textContent = '渲染失败: ' + e;
+    }
+  };
+
+  window.applyTheme = function (dark, font, maxw) {
+    var d = !!dark;
+    var md = document.getElementById('content');
+    md.classList.toggle('theme-dark', d);
+    document.body.classList.toggle('theme-dark', d);
+    document.body.style.colorScheme = d ? 'dark' : 'light';
+    if (font) { md.style.fontSize = font + 'px'; md.style.lineHeight = (font * 1.6) + 'px'; }
+    if (maxw) { md.style.maxWidth = maxw + 'px'; md.style.marginLeft = 'auto'; md.style.marginRight = 'auto'; }
+    document.getElementById('css-hl-light').disabled = d;
+    document.getElementById('css-hl-dark').disabled = !d;
+  };
+
+  window.scrollToHeading = function (id) {
+    var el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.findText = function (term) {
+    var el = document.getElementById('content');
+    el.querySelectorAll('mark.md-hit').forEach(function (m) {
+      var p = m.parentNode;
+      while (m.firstChild) p.insertBefore(m.firstChild, m);
+      p.removeChild(m); p.normalize();
+    });
+    if (!term) return 0;
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    var count = 0, first = null;
+    var low = term.toLowerCase();
+    nodes.forEach(function (node) {
+      var text = node.nodeValue;
+      var i = text.toLowerCase().indexOf(low);
+      if (i === -1) return;
+      var frag = document.createDocumentFragment();
+      var last = 0;
+      while (i !== -1) {
+        if (i > last) frag.appendChild(document.createTextNode(text.substring(last, i)));
+        var mark = document.createElement('mark');
+        mark.className = 'md-hit';
+        mark.textContent = text.substring(i, i + term.length);
+        frag.appendChild(mark);
+        count++; if (!first) first = mark;
+        last = i + term.length;
+        i = text.toLowerCase().indexOf(low, last);
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.substring(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return count;
+  };
+
+  if (window.AndroidBridge && window.AndroidBridge.onReady) window.AndroidBridge.onReady();
+</script>
+</body>
+</html>

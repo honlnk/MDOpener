@@ -1,0 +1,330 @@
+/* ============================================================
+   MD Opener — Typewriter Theme
+   复刻 Obsidian "Typewriter" 主题的阅读向视觉语言：
+   暖纸 / 深炭双主题、舒适排版、Obsidian 风格 Callout。
+   使用系统字体栈（不内嵌字体，零额外体积）。
+   ============================================================ */
+
+/* ---------- 设计变量（亮色为默认，.theme-dark 覆盖） ---------- */
+:root {
+  /* 亮色（暖纸） */
+  --tw-bg: #FBF8F1;
+  --tw-text: #33302A;
+  --tw-text-soft: #6A655A;
+  --tw-heading: #211E19;
+  --tw-link: #A65A2E;
+  --tw-border: #E7E0D0;
+  --tw-rule: #E0D8C6;
+  --tw-code-bg: #F1EBDD;
+  --tw-code-text: #5B4636;
+  --tw-quote-border: #C9BBA0;
+  --tw-quote-text: #5C5648;
+  --tw-selection: #F0E0BF;
+  --tw-tag-bg: #EFE7D6;
+  --tw-tag-text: #8A6A3B;
+
+  /* Callout 默认（灰） */
+  --c: #8B949E; --c-rgb: 139,148,158;
+  --c-note: #4a8aff; --c-note-rgb: 74,138,255;
+  --c-abstract: #1d8a80; --c-abstract-rgb: 29,138,128;
+  --c-info: #4a8aff; --c-info-rgb: 74,138,255;
+  --c-todo: #4a8aff; --c-todo-rgb: 74,138,255;
+  --c-tip: #2e9e6b; --c-tip-rgb: 46,158,107;
+  --c-success: #2e9e6b; --c-success-rgb: 46,158,107;
+  --c-question: #c79a3a; --c-question-rgb: 199,154,58;
+  --c-warning: #d98c3f; --c-warning-rgb: 217,140,63;
+  --c-failure: #d9534f; --c-failure-rgb: 217,83,79;
+  --c-danger: #d9534f; --c-danger-rgb: 217,83,79;
+  --c-bug: #d9534f; --c-bug-rgb: 217,83,79;
+  --c-example: #9b6dcc; --c-example-rgb: 155,109,204;
+  --c-quote: #9aa0a6; --c-quote-rgb: 154,160,166;
+}
+
+/* 暗色（深炭）覆盖：挂在 body.theme-dark 上，body 留白区也跟随 */
+body.theme-dark {
+  --tw-bg: #1B1916;
+  --tw-text: #D9D3C4;
+  --tw-text-soft: #9A9486;
+  --tw-heading: #ECE6D7;
+  --tw-link: #D6A878;
+  --tw-border: #38332A;
+  --tw-rule: #322D25;
+  --tw-code-bg: #26221C;
+  --tw-code-text: #E0C9A6;
+  --tw-quote-border: #4A4438;
+  --tw-quote-text: #A89F8C;
+  --tw-selection: #3A3326;
+  --tw-tag-bg: #2A251E;
+  --tw-tag-text: #C7A877;
+
+  --c-note: #58a0ff; --c-note-rgb: 88,160,255;
+  --c-abstract: #2bb3a3; --c-abstract-rgb: 43,179,163;
+  --c-info: #58a0ff; --c-info-rgb: 88,160,255;
+  --c-todo: #58a0ff; --c-todo-rgb: 88,160,255;
+  --c-tip: #43c585; --c-tip-rgb: 67,197,133;
+  --c-success: #43c585; --c-success-rgb: 67,197,133;
+  --c-question: #e0b24a; --c-question-rgb: 224,178,74;
+  --c-warning: #e6a35a; --c-warning-rgb: 230,163,90;
+  --c-failure: #ec6b66; --c-failure-rgb: 236,107,102;
+  --c-danger: #ec6b66; --c-danger-rgb: 236,107,102;
+  --c-bug: #ec6b66; --c-bug-rgb: 236,107,102;
+  --c-example: #b48fe0; --c-example-rgb: 180,143,224;
+  --c-quote: #aab0b6; --c-quote-rgb: 170,176,182;
+}
+
+/* ---------- 基础容器（背景/字体跟随主题变量） ---------- */
+html, body { margin: 0; padding: 0; background: var(--tw-bg); }
+body { color: var(--tw-text); transition: background 0.2s ease; }
+.markdown-body {
+  background: var(--tw-bg);
+  color: var(--tw-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.75;
+  word-wrap: break-word;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* ---------- 基础排版 ---------- */
+.markdown-body > *:first-child { margin-top: 0 !important; }
+.markdown-body > *:last-child { margin-bottom: 0 !important; }
+
+.markdown-body p { margin: 0 0 1em; }
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3,
+.markdown-body h4, .markdown-body h5, .markdown-body h6 {
+  color: var(--tw-heading);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 1.8em 0 0.7em;
+  letter-spacing: -0.01em;
+}
+.markdown-body h1 { font-size: 1.9em; margin-top: 0.2em; }
+.markdown-body h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid var(--tw-rule); }
+.markdown-body h3 { font-size: 1.25em; }
+.markdown-body h4 { font-size: 1.08em; }
+.markdown-body h5 { font-size: 1em; color: var(--tw-text-soft); }
+.markdown-body h6 { font-size: 0.9em; color: var(--tw-text-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.markdown-body a { color: var(--tw-link); text-decoration: none; border-bottom: 1px solid rgba(166,90,46,0.25); }
+.markdown-body.theme-dark a { border-bottom-color: rgba(214,168,120,0.3); }
+.markdown-body a:hover { border-bottom-color: currentColor; }
+
+.markdown-body ul, .markdown-body ol { margin: 0 0 1em; padding-left: 1.6em; }
+.markdown-body li { margin: 0.3em 0; }
+.markdown-body li::marker { color: var(--tw-text-soft); }
+.markdown-body ul.contains-task-list, .markdown-body li.task-list-item { list-style: none; }
+.markdown-body li.task-list-item { padding-left: 0; }
+.markdown-body input[type="checkbox"] { margin-right: 0.5em; transform: translateY(1px); }
+
+.markdown-body hr { border: none; border-top: 1px solid var(--tw-rule); margin: 2em 0; }
+
+.markdown-body blockquote {
+  margin: 1.2em 0;
+  padding: 0.4em 1.1em;
+  border-left: 4px solid var(--tw-quote-border);
+  color: var(--tw-quote-text);
+  background: rgba(201,187,160,0.10);
+}
+.markdown-body blockquote p { margin: 0.4em 0; }
+
+/* ---------- 行内 / 块代码 ---------- */
+.markdown-body code {
+  font-family: "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code",
+    Consolas, "Noto Sans Mono CJK SC", "Microsoft YaHei", monospace;
+  font-size: 0.88em;
+  background: var(--tw-code-bg);
+  color: var(--tw-code-text);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  word-break: break-word;
+}
+.markdown-body pre {
+  margin: 1.2em 0;
+  padding: 1em 1.1em;
+  border-radius: 8px;
+  border: 1px solid var(--tw-border);
+  background: var(--tw-code-bg);
+  overflow: auto;
+  line-height: 1.6;
+}
+.markdown-body pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: 0.86em;
+  border-radius: 0;
+}
+
+/* ---------- 表格 ---------- */
+.markdown-body table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+  display: block;
+  overflow-x: auto;
+}
+.markdown-body th, .markdown-body td {
+  border: 1px solid var(--tw-border);
+  padding: 0.5em 0.8em;
+  text-align: left;
+}
+.markdown-body th { background: var(--tw-code-bg); color: var(--tw-heading); font-weight: 600; }
+.markdown-body tr:nth-child(even) td { background: rgba(231,224,208,0.25); }
+.markdown-body.theme-dark tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+
+/* ---------- 图片 ---------- */
+.markdown-body img { max-width: 100%; height: auto; border-radius: 6px; }
+.markdown-body img.broken { opacity: 0.25; }
+
+/* ---------- 高亮 / 标记 ---------- */
+.markdown-body mark { background: #FCE9A8; color: inherit; border-radius: 3px; padding: 0.05em 0.25em; }
+.markdown-body.theme-dark mark { background: #6b5a1f; color: #FBF8F1; }
+
+/* ---------- 标签 #tag ---------- */
+.markdown-body a.tag {
+  display: inline-block;
+  background: var(--tw-tag-bg);
+  color: var(--tw-tag-text);
+  border: none;
+  border-radius: 999px;
+  padding: 0.05em 0.6em;
+  font-size: 0.82em;
+  text-decoration: none;
+  margin: 0 0.15em;
+}
+.markdown-body a.tag:hover { filter: brightness(0.96); }
+
+/* ---------- 双链 [[wikilink]] ---------- */
+.markdown-body a.internal-link {
+  color: var(--tw-link);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(166,90,46,0.5);
+  cursor: default;
+}
+.markdown-body.theme-dark a.internal-link { border-bottom-color: rgba(214,168,120,0.5); }
+
+/* ---------- 嵌入 ![[page]] ---------- */
+.markdown-body .embed {
+  margin: 1em 0;
+  padding: 0.8em 1em;
+  border: 1px dashed var(--tw-border);
+  border-radius: 8px;
+  color: var(--tw-text-soft);
+  font-size: 0.9em;
+  background: rgba(231,224,208,0.18);
+}
+
+/* ============================================================
+   Callout（Obsidian 风格提示框）
+   12 种主类型 + 别名映射 + 折叠支持（details/summary）
+   ============================================================ */
+.markdown-body .callout {
+  --callout: var(--c);
+  --callout-rgb: var(--c-rgb);
+  margin: 1.2em 0;
+  padding: 0;
+  border-radius: 8px;
+  border-left: 4px solid var(--callout);
+  background: rgba(var(--callout-rgb), 0.10);
+  overflow: hidden;
+}
+.markdown-body .callout-note, .markdown-body .callout-info, .markdown-body .callout-todo {
+  --callout: var(--c-note); --callout-rgb: var(--c-note-rgb);
+}
+.markdown-body .callout-abstract, .markdown-body .callout-summary, .markdown-body .callout-tldr {
+  --callout: var(--c-abstract); --callout-rgb: var(--c-abstract-rgb);
+}
+.markdown-body .callout-tip, .markdown-body .callout-hint, .markdown-body .callout-important {
+  --callout: var(--c-tip); --callout-rgb: var(--c-tip-rgb);
+}
+.markdown-body .callout-success, .markdown-body .callout-check, .markdown-body .callout-done {
+  --callout: var(--c-success); --callout-rgb: var(--c-success-rgb);
+}
+.markdown-body .callout-question, .markdown-body .callout-help, .markdown-body .callout-faq {
+  --callout: var(--c-question); --callout-rgb: var(--c-question-rgb);
+}
+.markdown-body .callout-warning, .markdown-body .callout-caution, .markdown-body .callout-attention {
+  --callout: var(--c-warning); --callout-rgb: var(--c-warning-rgb);
+}
+.markdown-body .callout-failure, .markdown-body .callout-missing, .markdown-body .callout-fail {
+  --callout: var(--c-failure); --callout-rgb: var(--c-failure-rgb);
+}
+.markdown-body .callout-danger, .markdown-body .callout-error {
+  --callout: var(--c-danger); --callout-rgb: var(--c-danger-rgb);
+}
+.markdown-body .callout-bug {
+  --callout: var(--c-bug); --callout-rgb: var(--c-bug-rgb);
+}
+.markdown-body .callout-example {
+  --callout: var(--c-example); --callout-rgb: var(--c-example-rgb);
+}
+.markdown-body .callout-quote, .markdown-body .callout-cite {
+  --callout: var(--c-quote); --callout-rgb: var(--c-quote-rgb);
+}
+
+/* 标题行 */
+.markdown-body .callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 600;
+  color: var(--callout);
+  padding: 0.7em 1em 0.5em;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+.markdown-body .callout-icon {
+  flex: 0 0 auto;
+  width: 1.15em;
+  height: 1.15em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.markdown-body .callout-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.markdown-body .callout-title-inner { flex: 1 1 auto; }
+
+/* 内容区 */
+.markdown-body .callout-content {
+  padding: 0 1em 0.6em;
+  color: var(--tw-text);
+}
+.markdown-body .callout-content > *:first-child { margin-top: 0; }
+.markdown-body .callout-content > *:last-child { margin-bottom: 0; }
+.markdown-body .callout-content p { color: var(--tw-text); }
+
+/* 折叠：用原生 details/summary */
+.markdown-body details.callout.is-foldable {
+  padding: 0;
+}
+.markdown-body details.callout.is-foldable > summary.callout-summary {
+  list-style: none;
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+.markdown-body details.callout.is-foldable > summary.callout-summary::-webkit-details-marker { display: none; }
+.markdown-body details.callout.is-foldable > summary.callout-summary::marker { content: ''; }
+/* 折叠箭头（旋转动画） */
+.markdown-body details.callout .callout-title .fold-caret {
+  flex: 0 0 auto;
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: auto;
+  transition: transform 0.18s ease;
+  opacity: 0.7;
+}
+.markdown-body details.callout:not([open]) .callout-title .fold-caret { transform: rotate(-90deg); }
+.markdown-body details.callout[open] .callout-title .fold-caret { transform: rotate(0deg); }
+/* 折叠态下隐藏内容（原生行为已处理，这里仅兜底） */
+.markdown-body details.callout:not([open]) > .callout-content { display: none; }

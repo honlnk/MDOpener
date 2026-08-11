@@ -1,0 +1,98 @@
+package com.honlnk.md_opener.app.ui
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.honlnk.md_opener.app.R
+import kotlin.math.roundToInt
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreen(
+    themeMode: Int,
+    fontSizeSp: Int,
+    maxWidthDp: Int,
+    onThemeChange: (Int) -> Unit,
+    onFontChange: (Int) -> Unit,
+    onWidthChange: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.settings)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+            Text("主题", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    stringResource(R.string.theme_system) to 0,
+                    stringResource(R.string.theme_light) to 1,
+                    stringResource(R.string.theme_dark) to 2
+                ).forEach { (label, value) ->
+                    FilterChip(
+                        selected = themeMode == value,
+                        onClick = { onThemeChange(value) },
+                        label = { Text(label) }
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+            Text(
+                "${stringResource(R.string.font_size)}：${fontSizeSp}sp",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Slider(
+                value = fontSizeSp.toFloat(),
+                onValueChange = { onFontChange(it.roundToInt()) },
+                valueRange = 12f..28f,
+                steps = 16
+            )
+
+            Spacer(Modifier.height(24.dp))
+            Text(
+                "${stringResource(R.string.content_width)}：${maxWidthDp}dp",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Slider(
+                value = maxWidthDp.toFloat(),
+                onValueChange = { onWidthChange(it.roundToInt()) },
+                valueRange = 320f..1100f,
+                steps = 39
+            )
+        }
+    }
+}
