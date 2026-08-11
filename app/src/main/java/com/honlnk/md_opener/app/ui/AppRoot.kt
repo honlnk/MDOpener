@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewModelScope
 import com.honlnk.md_opener.app.MainViewModel
-import com.honlnk.md_opener.app.model.RecentItem
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,12 +47,8 @@ fun AppRoot(vm: MainViewModel) {
             onClose = vm::closeCurrent
         )
     } else {
-        val recent by vm.recentFiles.collectAsState(initial = emptyList<RecentItem>())
-        RecentScreen(
-            recent = recent,
+        HomeScreen(
             onOpenUri = { vm.openUri(context, it) },
-            onRemove = vm::removeRecent,
-            onClear = vm::clearRecent,
             onSettings = { showSettings = true }
         )
     }

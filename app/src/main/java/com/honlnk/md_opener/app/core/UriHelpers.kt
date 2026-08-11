@@ -31,15 +31,4 @@ object UriReader {
         }
         return uri.lastPathSegment
     }
-
-    /** 尽量持久化读取权限，方便下次直接重开（仅对 SAF 来源的 URI 有效，其它来源静默忽略） */
-    fun tryPersist(context: Context, uri: Uri) {
-        try {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-        } catch (_: Exception) {
-        }
-    }
 }

@@ -1,14 +1,12 @@
 <resources>
     <string name="app_name">MD Opener</string>
-    <string name="recent_title">最近打开</string>
-    <string name="recent_empty">还没有打开过文件\n在文件管理器里点一个 .md 文件，选择「MD Opener」即可打开</string>
+    <string name="home_hint">点击打开 Markdown 文件</string>
     <string name="open_file">打开文件</string>
     <string name="settings">设置</string>
     <string name="toc">目录</string>
     <string name="search">搜索</string>
     <string name="back">返回</string>
     <string name="share">分享</string>
-    <string name="clear_recent">清空</string>
     <string name="theme_system">跟随系统</string>
     <string name="theme_light">浅色</string>
     <string name="theme_dark">深色</string>

@@ -10,12 +10,6 @@ data class OpenedFile(
     val error: Boolean = false
 )
 
-data class RecentItem(
-    val uri: String,
-    val name: String,
-    val lastOpened: Long
-)
-
 data class TocItem(
     val id: String,
     val text: String,
