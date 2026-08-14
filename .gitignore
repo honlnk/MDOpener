@@ -13,3 +13,6 @@ local.properties
 
 # Logs
 *.log
+
+# ZCode
+.zcode/plans/
