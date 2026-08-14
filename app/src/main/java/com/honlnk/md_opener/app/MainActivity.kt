@@ -33,13 +33,20 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
-        val uri: Uri? = when (intent.action) {
-            Intent.ACTION_VIEW -> intent.data
-            Intent.ACTION_SEND -> IntentCompat.getParcelableExtra(
-                intent, Intent.EXTRA_STREAM, Uri::class.java
-            )
-            else -> null
+        when (intent.action) {
+            Intent.ACTION_VIEW -> intent.data?.let { vm.openUri(this, it) }
+            Intent.ACTION_SEND -> {
+                val uri = IntentCompat.getParcelableExtra(
+                    intent, Intent.EXTRA_STREAM, Uri::class.java
+                )
+                if (uri != null) {
+                    vm.openUri(this, uri)
+                } else {
+                    // 部分 App（如便签类）只分享纯文本 EXTRA_TEXT，作为内存文档展示
+                    val text = intent.getStringExtra(Intent.EXTRA_TEXT)
+                    if (!text.isNullOrBlank()) vm.openSharedText(text)
+                }
+            }
         }
-        if (uri != null) vm.openUri(this, uri)
     }
 }

@@ -2,7 +2,6 @@ package com.honlnk.md_opener.app.ui
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.webkit.WebView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -86,7 +85,7 @@ fun ViewerScreen(
                     IconButton(onClick = { showToc = true }) {
                         Icon(Icons.Filled.List, stringResource(R.string.toc))
                     }
-                    IconButton(onClick = { shareFile(context, file.uri) }) {
+                    IconButton(onClick = { share(context, file) }) {
                         Icon(Icons.Filled.Share, stringResource(R.string.share))
                     }
                 }
@@ -183,11 +182,17 @@ fun ViewerScreen(
     }
 }
 
-private fun shareFile(context: Context, uri: Uri) {
+private fun share(context: Context, file: OpenedFile) {
+    // 有 uri 时分享文件流；来自 EXTRA_TEXT 的内存文档退化为分享纯文本
+    if (file.content.isNullOrBlank()) return
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/markdown"
-        putExtra(Intent.EXTRA_STREAM, uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        if (file.uri != null) {
+            putExtra(Intent.EXTRA_STREAM, file.uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } else {
+            putExtra(Intent.EXTRA_TEXT, file.content)
+        }
     }
     context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
 }

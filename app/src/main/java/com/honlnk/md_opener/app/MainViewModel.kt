@@ -35,6 +35,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /** 接收 ACTION_SEND 的 EXTRA_TEXT 纯文本（无 uri，作为内存文档直接展示） */
+    fun openSharedText(text: String) {
+        currentFile.value = OpenedFile(null, "shared.md", text, loading = false)
+    }
+
     fun closeCurrent() {
         currentFile.value = null
     }

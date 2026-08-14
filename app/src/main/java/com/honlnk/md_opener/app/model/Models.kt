@@ -3,7 +3,7 @@ package com.honlnk.md_opener.app.model
 import android.net.Uri
 
 data class OpenedFile(
-    val uri: Uri,
+    val uri: Uri?,
     val name: String,
     val content: String?,
     val loading: Boolean = false,
