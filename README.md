@@ -14,7 +14,7 @@
 - 📑 **目录（TOC）**：自动提取标题，点击快速跳转
 - 🔍 **页内搜索**：实时高亮匹配，显示命中数量
 - 🖼️ **相对图片解析**：支持 `![](./images/a.png)` 这类同级目录引用（file:// 与树形 DocumentsProvider 的 content:// 均可）
-- 📤 **一键分享**：把当前文件分享给其他应用
+- 📄 **导出 PDF**：展开全部折叠内容，智能分页，矢量文字可选中
 - 🕘 **最近文件**：自动记录打开历史，快速回到上次阅读处
 - 🧩 **代码高亮**：GitHub 风格（浅 / 深双主题），基于 highlight.js
 
@@ -51,7 +51,7 @@ app/src/main/
     └── ui/
         ├── AppRoot.kt           # 导航根
         ├── RecentScreen.kt      # 最近打开列表
-        ├── ViewerScreen.kt      # 查看器（目录 / 搜索 / 分享）
+        ├── ViewerScreen.kt      # 查看器（目录 / 搜索 / 导出 PDF）
         ├── SettingsScreen.kt    # 设置
         ├── components/MarkdownWebView.kt
         └── theme/Theme.kt

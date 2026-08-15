@@ -1,7 +1,6 @@
 package com.honlnk.md_opener.app.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -92,9 +90,6 @@ fun ViewerScreen(
                     }
                     IconButton(onClick = { showToc = true }) {
                         Icon(Icons.Filled.List, stringResource(R.string.toc))
-                    }
-                    IconButton(onClick = { share(context, file) }) {
-                        Icon(Icons.Filled.Share, stringResource(R.string.share))
                     }
                     IconButton(onClick = { exportPdf(context, webViewRef.value, file.name) }) {
                         Icon(Icons.Filled.PictureAsPdf, stringResource(R.string.export_pdf))
@@ -191,21 +186,6 @@ fun ViewerScreen(
             )
         }
     }
-}
-
-private fun share(context: Context, file: OpenedFile) {
-    // 有 uri 时分享文件流；来自 EXTRA_TEXT 的内存文档退化为分享纯文本
-    if (file.content.isNullOrBlank()) return
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/markdown"
-        if (file.uri != null) {
-            putExtra(Intent.EXTRA_STREAM, file.uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        } else {
-            putExtra(Intent.EXTRA_TEXT, file.content)
-        }
-    }
-    context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
 }
 
 /** 通过系统打印框架导出 PDF：Chromium 打印引擎负责分页，用户在对话框选「保存为 PDF」 */
