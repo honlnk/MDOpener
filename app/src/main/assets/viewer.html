@@ -12,6 +12,14 @@
   img { max-width: 100%; height: auto; }
   img.broken { opacity: 0.25; }
   mark.md-hit { background: #ffe58a; color: inherit; border-radius: 2px; padding: 0 1px; }
+  @media print {
+    /* 智能分页：整块元素尽量不跨页切断，标题不孤悬页尾 */
+    blockquote, table, tr, pre, .callout, details, figure, img { break-inside: avoid; page-break-inside: avoid; }
+    h1, h2, h3, h4, h5, h6 { break-after: avoid; page-break-after: avoid; }
+    p, li { orphans: 3; widows: 3; }
+    /* 屏幕上靠横向滚动查看的长代码行，在纸面上改为换行，避免被截断 */
+    pre { white-space: pre-wrap; word-break: break-all; }
+  }
 </style>
 </head>
 <body>
@@ -216,6 +224,26 @@
   window.scrollToHeading = function (id) {
     var el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // ---- PDF 导出支持 ----
+  // 导出前展开全部折叠（PDF 不可交互）、强制浅色（深色底打印费墨且难看），
+  // 打印结束后由 restoreAfterPrint 恢复原状。
+  window.preparePrint = function () {
+    window.__printState = {
+      dark: document.body.classList.contains('theme-dark'),
+      closed: Array.prototype.slice.call(document.querySelectorAll('details')).filter(function (d) { return !d.open; })
+    };
+    document.querySelectorAll('details').forEach(function (d) { d.open = true; });
+    window.applyTheme(false);
+  };
+
+  window.restoreAfterPrint = function () {
+    var s = window.__printState;
+    if (!s) return;
+    s.closed.forEach(function (d) { d.open = false; });
+    window.applyTheme(s.dark);
+    window.__printState = null;
   };
 
   window.findText = function (term) {

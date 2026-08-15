@@ -2,6 +2,13 @@ package com.honlnk.md_opener.app.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import android.os.CancellationSignal
+import android.os.ParcelFileDescriptor
+import android.print.PageRange
+import android.print.PrintAttributes
+import android.print.PrintDocumentAdapter
+import android.print.PrintManager
 import android.webkit.WebView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
@@ -87,6 +95,9 @@ fun ViewerScreen(
                     }
                     IconButton(onClick = { share(context, file) }) {
                         Icon(Icons.Filled.Share, stringResource(R.string.share))
+                    }
+                    IconButton(onClick = { exportPdf(context, webViewRef.value, file.name) }) {
+                        Icon(Icons.Filled.PictureAsPdf, stringResource(R.string.export_pdf))
                     }
                 }
             )
@@ -195,4 +206,43 @@ private fun share(context: Context, file: OpenedFile) {
         }
     }
     context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
+}
+
+/** 通过系统打印框架导出 PDF：Chromium 打印引擎负责分页，用户在对话框选「保存为 PDF」 */
+private fun exportPdf(context: Context, webView: WebView?, fileName: String) {
+    if (webView == null) return
+    // 先展开全部折叠、切换浅色主题，再交给打印引擎（preparePrint 内部为同步 DOM 操作）
+    webView.evaluateJavascript("window.preparePrint && window.preparePrint()") {
+        val jobName = fileName.substringBeforeLast('.', fileName).ifBlank { "document" }
+        val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+        printManager.print(jobName, restoreAfterPrintAdapter(webView, jobName), null)
+    }
+}
+
+/** 包装打印适配器：打印结束（含取消）后恢复折叠状态与主题 */
+private fun restoreAfterPrintAdapter(webView: WebView, jobName: String): PrintDocumentAdapter {
+    val base = webView.createPrintDocumentAdapter(jobName)
+    return object : PrintDocumentAdapter() {
+        override fun onLayout(
+            oldAttributes: PrintAttributes?,
+            newAttributes: PrintAttributes,
+            cancellationSignal: CancellationSignal?,
+            callback: PrintDocumentAdapter.LayoutResultCallback,
+            extras: Bundle?
+        ) = base.onLayout(oldAttributes, newAttributes, cancellationSignal, callback, extras)
+
+        override fun onWrite(
+            pages: Array<out PageRange>?,
+            destination: ParcelFileDescriptor,
+            cancellationSignal: CancellationSignal?,
+            callback: PrintDocumentAdapter.WriteResultCallback
+        ) = base.onWrite(pages, destination, cancellationSignal, callback)
+
+        override fun onFinish() {
+            base.onFinish()
+            webView.post {
+                webView.evaluateJavascript("window.restoreAfterPrint && window.restoreAfterPrint()", null)
+            }
+        }
+    }
 }
