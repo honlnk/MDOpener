@@ -33,8 +33,11 @@
     p, li { orphans: 3; widows: 3; }
     /* 屏幕上靠横向滚动查看的长代码行，在纸面上改为换行，避免被截断 */
     pre { white-space: pre-wrap; word-break: break-all; }
-    /* markdown ---（hr）在 PDF 中作为分页符，线条本身隐藏 */
-    hr { visibility: hidden; break-after: page; page-break-after: always; border: 0; margin: 0; height: 0; }
+    /* markdown ---（hr）在 PDF 中作为分页符，线条本身隐藏。
+       分页指令挂在 hr 的下一个兄弟元素上（break-before）而非 hr 自身：
+       若 hr 恰好被挤到新页顶部，不会再额外产生一个只含隐形分割线的空白页 */
+    hr { visibility: hidden; border: 0; margin: 0; height: 0; }
+    hr + * { break-before: page; page-break-before: always; }
   }
 </style>
 </head>
