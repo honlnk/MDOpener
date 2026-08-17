@@ -49,6 +49,7 @@ fun AppRoot(vm: MainViewModel) {
             maxWidthDp = maxWidthDp,
             pdfPaperSize = pdfPaperSize,
             pdfKeepBackground = pdfKeepBackground,
+            pdfAutoOpen = pdfAutoOpen,
             onPdfPaperChange = { vm.viewModelScope.launch { vm.settings.setPdfPaperSize(it) } },
             onPdfKeepBgChange = { vm.viewModelScope.launch { vm.settings.setPdfKeepBackground(it) } },
             onPdfAutoOpenChange = { vm.viewModelScope.launch { vm.settings.setPdfAutoOpen(it) } },
