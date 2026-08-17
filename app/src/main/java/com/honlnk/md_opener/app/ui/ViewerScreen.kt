@@ -4,8 +4,9 @@ import android.content.Context
 import android.net.Uri
 import android.print.PageRange
 import android.print.PrintAttributes
+import android.print.PrintCallbackFactory
 import android.print.PrintDocumentAdapter
-import android.print.PrintDocumentInfo
+import android.print.PrintManager
 import android.os.ParcelFileDescriptor
 import android.webkit.WebView
 import android.widget.Toast
@@ -216,6 +217,8 @@ private fun suggestedPdfName(fileName: String): String {
 /**
  * 绕开系统打印对话框，直接驱动打印适配器把 PDF 写入用户选择的位置：
  * onLayout（A4 排版）→ onWrite（写入文件描述符）。页边距来自 viewer.html 的 @page 规则。
+ * 回调经 android.print 包内的 PrintCallbackFactory 构造（构造函数包私有）；
+ * 若运行时拒绝该访问，回退到系统打印对话框。
  */
 private fun writePdfToFile(context: Context, webView: WebView, uri: Uri, fileName: String) {
     val jobName = fileName.substringBeforeLast('.', fileName).ifBlank { "document" }
@@ -227,41 +230,93 @@ private fun writePdfToFile(context: Context, webView: WebView, uri: Uri, fileNam
         .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
         .build()
 
-    adapter.onLayout(null, attributes, null, object : PrintDocumentAdapter.LayoutResultCallback() {
-        override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
-            val pfd = try {
-                context.contentResolver.openFileDescriptor(uri, "rw")
-            } catch (_: Exception) {
-                null
-            }
-            if (pfd == null) {
-                adapter.onFinish()
-                finishExport(context, webView, "PDF 保存失败：无法写入所选位置")
-                return
-            }
-            adapter.onWrite(
-                arrayOf(PageRange.ALL_PAGES), pfd, null,
-                object : PrintDocumentAdapter.WriteResultCallback() {
-                    override fun onWriteFinished(pages: Array<out PageRange>) {
-                        pfd.close()
-                        adapter.onFinish()
-                        finishExport(context, webView, "PDF 已保存")
-                    }
-
-                    override fun onWriteFailed(error: CharSequence?) {
-                        pfd.close()
-                        adapter.onFinish()
-                        finishExport(context, webView, "PDF 保存失败")
-                    }
+    try {
+        val layoutCallback = PrintCallbackFactory.layout(
+            onFinished = { _, _ ->
+                val pfd = try {
+                    context.contentResolver.openFileDescriptor(uri, "rw")
+                } catch (_: Exception) {
+                    null
                 }
-            )
-        }
+                if (pfd == null) {
+                    adapter.onFinish()
+                    finishExport(context, webView, "PDF 保存失败：无法写入所选位置")
+                    return@layout
+                }
+                try {
+                    adapter.onWrite(
+                        arrayOf(PageRange.ALL_PAGES), pfd, null,
+                        PrintCallbackFactory.write(
+                            onFinished = { _ ->
+                                pfd.close()
+                                adapter.onFinish()
+                                finishExport(context, webView, "PDF 已保存")
+                            },
+                            onFailed = { _ ->
+                                pfd.close()
+                                adapter.onFinish()
+                                finishExport(context, webView, "PDF 保存失败")
+                            },
+                            onCancelled = {
+                                pfd.close()
+                                adapter.onFinish()
+                                finishExport(context, webView, "已取消导出")
+                            }
+                        )
+                    )
+                } catch (t: Throwable) {
+                    pfd.close()
+                    adapter.onFinish()
+                    fallbackToPrintDialog(context, webView, jobName)
+                }
+            },
+            onFailed = { _ ->
+                adapter.onFinish()
+                finishExport(context, webView, "PDF 生成失败")
+            },
+            onCancelled = {
+                adapter.onFinish()
+                finishExport(context, webView, "已取消导出")
+            }
+        )
+        adapter.onLayout(null, attributes, null, layoutCallback, null)
+    } catch (t: Throwable) {
+        fallbackToPrintDialog(context, webView, jobName)
+    }
+}
 
-        override fun onLayoutFailed(error: CharSequence?) {
-            adapter.onFinish()
-            finishExport(context, webView, "PDF 生成失败")
+/** 直写方案不可用时的回退：走系统打印对话框（用户手动选「保存为 PDF」） */
+private fun fallbackToPrintDialog(context: Context, webView: WebView, jobName: String) {
+    val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+    printManager.print(jobName, restoreAfterPrintAdapter(webView, jobName), null)
+}
+
+/** 回退方案用的适配器包装：打印结束（含取消）后恢复折叠状态与主题 */
+private fun restoreAfterPrintAdapter(webView: WebView, jobName: String): PrintDocumentAdapter {
+    val base = webView.createPrintDocumentAdapter(jobName)
+    return object : PrintDocumentAdapter() {
+        override fun onLayout(
+            oldAttributes: PrintAttributes?,
+            newAttributes: PrintAttributes,
+            cancellationSignal: android.os.CancellationSignal?,
+            callback: PrintDocumentAdapter.LayoutResultCallback,
+            extras: android.os.Bundle?
+        ) = base.onLayout(oldAttributes, newAttributes, cancellationSignal, callback, extras)
+
+        override fun onWrite(
+            pages: Array<out PageRange>?,
+            destination: ParcelFileDescriptor,
+            cancellationSignal: android.os.CancellationSignal?,
+            callback: PrintDocumentAdapter.WriteResultCallback
+        ) = base.onWrite(pages, destination, cancellationSignal, callback)
+
+        override fun onFinish() {
+            base.onFinish()
+            webView.post {
+                webView.evaluateJavascript("window.restoreAfterPrint && window.restoreAfterPrint()", null)
+            }
         }
-    }, null)
+    }
 }
 
 /** 导出收尾：提示结果并恢复折叠状态与主题 */
