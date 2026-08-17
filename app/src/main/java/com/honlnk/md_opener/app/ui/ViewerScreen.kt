@@ -42,7 +42,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -54,13 +53,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
 import com.honlnk.md_opener.app.R
 import com.honlnk.md_opener.app.model.OpenedFile
 import com.honlnk.md_opener.app.model.PdfPaperSize
 import com.honlnk.md_opener.app.model.TocItem
+import com.honlnk.md_opener.app.ui.components.CompactTopAppBar
 import com.honlnk.md_opener.app.ui.components.MarkdownWebView
 import org.json.JSONObject
 
@@ -106,14 +105,8 @@ fun ViewerScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        file.name,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
+            CompactTopAppBar(
+                title = file.name,
                 navigationIcon = {
                     IconButton(onClick = onClose) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))

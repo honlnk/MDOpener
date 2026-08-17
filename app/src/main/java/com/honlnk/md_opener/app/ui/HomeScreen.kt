@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -40,6 +39,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.honlnk.md_opener.app.R
+import com.honlnk.md_opener.app.ui.components.CompactTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,8 +53,8 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
+            CompactTopAppBar(
+                title = stringResource(R.string.app_name),
                 actions = {
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Filled.Settings, stringResource(R.string.settings))
