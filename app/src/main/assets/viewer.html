@@ -19,8 +19,13 @@
     /* 白底模式：整纸纯白，适合打印省墨 */
     html.print-mode-white, html.print-mode-white body,
     html.print-mode-white .markdown-body { background: #fff !important; }
-    /* 整页铺色模式：边距改为内容内边距，背景铺满整张纸 */
-    body.print-keepbg { padding: 14mm 12mm !important; }
+    /* 整页铺色模式：边距改为内容内边距，背景铺满整张纸；
+       clone 让 body 分页后每个页面片段都复制 padding/背景，续页不贴顶 */
+    body.print-keepbg {
+      padding: 14mm 12mm !important;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
     body.print-keepbg .markdown-body { padding: 0 !important; }
     /* 智能分页：整块元素尽量不跨页切断，标题不孤悬页尾 */
     blockquote, table, tr, pre, .callout, details, figure, img { break-inside: avoid; page-break-inside: avoid; }
