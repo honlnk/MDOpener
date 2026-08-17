@@ -7,14 +7,21 @@
 <link id="css-tw" rel="stylesheet" href="typewriter.css">
 <link id="css-hl-light" rel="stylesheet" href="hljs-github.css">
 <link id="css-hl-dark" rel="stylesheet" href="hljs-github-dark.css" disabled>
+<!-- 打印页边距（导出时由 preparePrint 按是否保留背景动态改写：保留背景则 margin:0 靠 body padding 留边，背景铺满整纸） -->
+<style id="print-page-style">@page { margin: 14mm 12mm; }</style>
 <style>
   pre { overflow: auto; }
   img { max-width: 100%; height: auto; }
   img.broken { opacity: 0.25; }
   mark.md-hit { background: #ffe58a; color: inherit; border-radius: 2px; padding: 0 1px; }
-  /* 打印页边距：Chromium 打印引擎按此渲染，续页顶部不再贴边 */
-  @page { margin: 14mm 12mm; }
   @media print {
+    * { transition: none !important; }
+    /* 白底模式：整纸纯白，适合打印省墨 */
+    html.print-mode-white, html.print-mode-white body,
+    html.print-mode-white .markdown-body { background: #fff !important; }
+    /* 整页铺色模式：边距改为内容内边距，背景铺满整张纸 */
+    body.print-keepbg { padding: 14mm 12mm !important; }
+    body.print-keepbg .markdown-body { padding: 0 !important; }
     /* 智能分页：整块元素尽量不跨页切断，标题不孤悬页尾 */
     blockquote, table, tr, pre, .callout, details, figure, img { break-inside: avoid; page-break-inside: avoid; }
     h1, h2, h3, h4, h5, h6 { break-after: avoid; page-break-after: avoid; }
@@ -232,14 +239,22 @@
 
   // ---- PDF 导出支持 ----
   // 导出前展开全部折叠（PDF 不可交互）、强制浅色（深色底打印费墨且难看），
+  // keepBg=true 时整页铺背景色（margin:0 + body padding 留边），否则白底，
   // 打印结束后由 restoreAfterPrint 恢复原状。
-  window.preparePrint = function () {
+  window.preparePrint = function (keepBg) {
+    keepBg = !!keepBg;
     window.__printState = {
       dark: document.body.classList.contains('theme-dark'),
       closed: Array.prototype.slice.call(document.querySelectorAll('details')).filter(function (d) { return !d.open; })
     };
     document.querySelectorAll('details').forEach(function (d) { d.open = true; });
     window.applyTheme(false);
+    document.documentElement.classList.toggle('print-mode-white', !keepBg);
+    document.body.classList.toggle('print-keepbg', keepBg);
+    var ps = document.getElementById('print-page-style');
+    if (ps) ps.textContent = keepBg
+      ? '@page { margin: 0; }'
+      : '@page { margin: 14mm 12mm; }';
   };
 
   window.restoreAfterPrint = function () {
@@ -247,6 +262,10 @@
     if (!s) return;
     s.closed.forEach(function (d) { d.open = false; });
     window.applyTheme(s.dark);
+    document.documentElement.classList.remove('print-mode-white');
+    document.body.classList.remove('print-keepbg');
+    var ps = document.getElementById('print-page-style');
+    if (ps) ps.textContent = '@page { margin: 14mm 12mm; }';
     window.__printState = null;
   };
 

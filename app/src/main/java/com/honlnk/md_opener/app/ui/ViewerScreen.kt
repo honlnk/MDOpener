@@ -15,10 +15,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,11 +32,13 @@ import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -51,17 +58,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
 import com.honlnk.md_opener.app.R
 import com.honlnk.md_opener.app.model.OpenedFile
+import com.honlnk.md_opener.app.model.PdfPaperSize
 import com.honlnk.md_opener.app.model.TocItem
 import com.honlnk.md_opener.app.ui.components.MarkdownWebView
 import org.json.JSONObject
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ViewerScreen(
     file: OpenedFile,
     isDark: Boolean,
     fontSizeSp: Int,
     maxWidthDp: Int,
+    pdfPaperSize: String,
+    pdfKeepBackground: Boolean,
+    onPdfPaperChange: (String) -> Unit,
+    onPdfKeepBgChange: (Boolean) -> Unit,
     onClose: () -> Unit
 ) {
     val context = LocalContext.current
@@ -71,6 +83,7 @@ fun ViewerScreen(
     var showSearch by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var searchCount by remember { mutableIntStateOf(0) }
+    var showExportDialog by remember { mutableStateOf(false) }
 
     // 「另存为 .pdf」选择器：选定位置后直接写入，取消则恢复折叠与主题
     val pdfSaver = rememberLauncherForActivityResult(
@@ -81,7 +94,10 @@ fun ViewerScreen(
             wv?.evaluateJavascript("window.restoreAfterPrint && window.restoreAfterPrint()", null)
             return@rememberLauncherForActivityResult
         }
-        writePdfToFile(context, wv, uri, file.name)
+        writePdfToFile(
+            context, wv, uri, file.name,
+            PdfPaperSize.fromId(pdfPaperSize).mediaSize()
+        )
     }
 
     Scaffold(
@@ -106,12 +122,7 @@ fun ViewerScreen(
                     IconButton(onClick = { showToc = true }) {
                         Icon(Icons.Filled.List, stringResource(R.string.toc))
                     }
-                    IconButton(onClick = {
-                        // 先展开全部折叠、切浅色主题，再弹「另存为」；写入结束统一恢复
-                        webViewRef.value?.evaluateJavascript(
-                            "window.preparePrint && window.preparePrint()"
-                        ) { pdfSaver.launch(suggestedPdfName(file.name)) }
-                    }) {
+                    IconButton(onClick = { showExportDialog = true }) {
                         Icon(Icons.Filled.PictureAsPdf, stringResource(R.string.export_pdf))
                     }
                 }
@@ -165,6 +176,57 @@ fun ViewerScreen(
             }
         }
 
+        if (showExportDialog) {
+            // 弹窗内选项每次打开时从持久化设置初始化
+            var paper by remember { mutableStateOf(PdfPaperSize.fromId(pdfPaperSize)) }
+            var keepBg by remember { mutableStateOf(pdfKeepBackground) }
+            AlertDialog(
+                onDismissRequest = { showExportDialog = false },
+                title = { Text(stringResource(R.string.export_pdf)) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text("纸张大小", style = MaterialTheme.typography.titleSmall)
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            PdfPaperSize.values().forEach { p ->
+                                FilterChip(
+                                    selected = paper == p,
+                                    onClick = { paper = p },
+                                    label = { Text(p.label) }
+                                )
+                            }
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Switch(checked = keepBg, onCheckedChange = { keepBg = it })
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text("保留背景色")
+                                Text(
+                                    if (keepBg) "整页铺背景色，适合电子阅读"
+                                    else "白底，适合打印（省墨）",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        onPdfPaperChange(paper.id)
+                        onPdfKeepBgChange(keepBg)
+                        showExportDialog = false
+                        // 先按选项调整打印态（展开折叠/浅色/背景模式），再弹「另存为」
+                        webViewRef.value?.evaluateJavascript(
+                            "window.preparePrint && window.preparePrint($keepBg)"
+                        ) { pdfSaver.launch(suggestedPdfName(file.name)) }
+                    }) { Text("导出") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showExportDialog = false }) { Text("取消") }
+                }
+            )
+        }
+
         if (showToc) {
             AlertDialog(
                 onDismissRequest = { showToc = false },
@@ -214,17 +276,32 @@ private fun suggestedPdfName(fileName: String): String {
     return "$base.pdf"
 }
 
+/** 纸张枚举 → 系统打印纸张规格 */
+private fun PdfPaperSize.mediaSize(): PrintAttributes.MediaSize = when (this) {
+    PdfPaperSize.A4 -> PrintAttributes.MediaSize.ISO_A4
+    PdfPaperSize.A5 -> PrintAttributes.MediaSize.ISO_A5
+    PdfPaperSize.B5 -> PrintAttributes.MediaSize.ISO_B5
+    PdfPaperSize.LETTER -> PrintAttributes.MediaSize.NA_LETTER
+    PdfPaperSize.LEGAL -> PrintAttributes.MediaSize.NA_LEGAL
+}
+
 /**
  * 绕开系统打印对话框，直接驱动打印适配器把 PDF 写入用户选择的位置：
- * onLayout（A4 排版）→ onWrite（写入文件描述符）。页边距来自 viewer.html 的 @page 规则。
+ * onLayout（排版）→ onWrite（写入文件描述符）。页边距来自 viewer.html 的 @page 规则。
  * 回调经 android.print 包内的 PrintCallbackFactory 构造（构造函数包私有）；
  * 若运行时拒绝该访问，回退到系统打印对话框。
  */
-private fun writePdfToFile(context: Context, webView: WebView, uri: Uri, fileName: String) {
+private fun writePdfToFile(
+    context: Context,
+    webView: WebView,
+    uri: Uri,
+    fileName: String,
+    mediaSize: PrintAttributes.MediaSize
+) {
     val jobName = fileName.substringBeforeLast('.', fileName).ifBlank { "document" }
     val adapter = webView.createPrintDocumentAdapter(jobName)
     val attributes = PrintAttributes.Builder()
-        .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+        .setMediaSize(mediaSize)
         .setResolution(PrintAttributes.Resolution("pdf", "pdf", 300, 300))
         .setColorMode(PrintAttributes.COLOR_MODE_COLOR)
         .setMinMargins(PrintAttributes.Margins.NO_MARGINS)

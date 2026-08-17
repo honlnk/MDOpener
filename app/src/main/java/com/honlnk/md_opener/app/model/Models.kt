@@ -15,3 +15,17 @@ data class TocItem(
     val text: String,
     val level: Int
 )
+
+/** PDF 导出纸张大小（id 持久化到 DataStore，映射到 PrintAttributes.MediaSize 在 UI 层做） */
+enum class PdfPaperSize(val id: String, val label: String) {
+    A4("a4", "A4"),
+    A5("a5", "A5"),
+    B5("b5", "B5"),
+    LETTER("letter", "Letter"),
+    LEGAL("legal", "Legal");
+
+    companion object {
+        fun fromId(id: String?): PdfPaperSize =
+            values().firstOrNull { it.id == id } ?: A4
+    }
+}
