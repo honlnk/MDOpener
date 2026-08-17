@@ -71,7 +71,7 @@ app/src/main/
 
 ## 版本
 
-当前版本 **1.1.0**（versionCode 5）。
+当前版本 **1.1.1**（versionCode 6）。
 
 ## License
 
