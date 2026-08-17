@@ -1,6 +1,7 @@
 package com.honlnk.md_opener.app.ui
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.print.PageRange
 import android.print.PrintAttributes
@@ -72,8 +73,10 @@ fun ViewerScreen(
     maxWidthDp: Int,
     pdfPaperSize: String,
     pdfKeepBackground: Boolean,
+    pdfAutoOpen: Boolean,
     onPdfPaperChange: (String) -> Unit,
     onPdfKeepBgChange: (Boolean) -> Unit,
+    onPdfAutoOpenChange: (Boolean) -> Unit,
     onClose: () -> Unit
 ) {
     val context = LocalContext.current
@@ -96,7 +99,8 @@ fun ViewerScreen(
         }
         writePdfToFile(
             context, wv, uri, file.name,
-            PdfPaperSize.fromId(pdfPaperSize).mediaSize()
+            PdfPaperSize.fromId(pdfPaperSize).mediaSize(),
+            pdfAutoOpen
         )
     }
 
@@ -180,6 +184,7 @@ fun ViewerScreen(
             // 弹窗内选项每次打开时从持久化设置初始化
             var paper by remember { mutableStateOf(PdfPaperSize.fromId(pdfPaperSize)) }
             var keepBg by remember { mutableStateOf(pdfKeepBackground) }
+            var autoOpen by remember { mutableStateOf(pdfAutoOpen) }
             AlertDialog(
                 onDismissRequest = { showExportDialog = false },
                 title = { Text(stringResource(R.string.export_pdf)) },
@@ -208,12 +213,25 @@ fun ViewerScreen(
                                 )
                             }
                         }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Switch(checked = autoOpen, onCheckedChange = { autoOpen = it })
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text("自动打开")
+                                Text(
+                                    "保存成功后立即用 PDF 阅读器打开",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
                     }
                 },
                 confirmButton = {
                     TextButton(onClick = {
                         onPdfPaperChange(paper.id)
                         onPdfKeepBgChange(keepBg)
+                        onPdfAutoOpenChange(autoOpen)
                         showExportDialog = false
                         // 先按选项调整打印态（展开折叠/浅色/背景模式），再弹「另存为」
                         webViewRef.value?.evaluateJavascript(
@@ -296,7 +314,8 @@ private fun writePdfToFile(
     webView: WebView,
     uri: Uri,
     fileName: String,
-    mediaSize: PrintAttributes.MediaSize
+    mediaSize: PrintAttributes.MediaSize,
+    autoOpen: Boolean
 ) {
     val jobName = fileName.substringBeforeLast('.', fileName).ifBlank { "document" }
     val adapter = webView.createPrintDocumentAdapter(jobName)
@@ -328,6 +347,7 @@ private fun writePdfToFile(
                                 pfd.close()
                                 adapter.onFinish()
                                 finishExport(context, webView, "PDF 已保存")
+                                if (autoOpen) openPdf(context, uri)
                             },
                             onFailed = { _ ->
                                 pfd.close()
@@ -401,5 +421,18 @@ private fun finishExport(context: Context, webView: WebView, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     webView.post {
         webView.evaluateJavascript("window.restoreAfterPrint && window.restoreAfterPrint()", null)
+    }
+}
+
+/** 用系统的 PDF 阅读器打开刚导出的文件 */
+private fun openPdf(context: Context, uri: Uri) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/pdf")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(intent)
+    } catch (_: Exception) {
+        Toast.makeText(context, "未找到可打开 PDF 的应用", Toast.LENGTH_SHORT).show()
     }
 }

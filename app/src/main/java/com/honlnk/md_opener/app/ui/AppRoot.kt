@@ -23,6 +23,7 @@ fun AppRoot(vm: MainViewModel) {
     val maxWidthDp by vm.settings.maxWidthDp.collectAsState(initial = 720)
     val pdfPaperSize by vm.settings.pdfPaperSize.collectAsState(initial = "a4")
     val pdfKeepBackground by vm.settings.pdfKeepBackground.collectAsState(initial = false)
+    val pdfAutoOpen by vm.settings.pdfAutoOpen.collectAsState(initial = false)
 
     val isDark = when (themeMode) {
         0 -> isSystemInDarkTheme()
@@ -50,6 +51,7 @@ fun AppRoot(vm: MainViewModel) {
             pdfKeepBackground = pdfKeepBackground,
             onPdfPaperChange = { vm.viewModelScope.launch { vm.settings.setPdfPaperSize(it) } },
             onPdfKeepBgChange = { vm.viewModelScope.launch { vm.settings.setPdfKeepBackground(it) } },
+            onPdfAutoOpenChange = { vm.viewModelScope.launch { vm.settings.setPdfAutoOpen(it) } },
             onClose = vm::closeCurrent
         )
     } else {
