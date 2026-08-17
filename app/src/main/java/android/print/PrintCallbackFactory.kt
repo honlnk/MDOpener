@@ -28,7 +28,7 @@ object PrintCallbackFactory {
         }
 
     fun write(
-        onFinished: (Array<PageRange>) -> Unit,
+        onFinished: (Array<out PageRange>) -> Unit,
         onFailed: (CharSequence?) -> Unit,
         onCancelled: () -> Unit = {}
     ): PrintDocumentAdapter.WriteResultCallback =
