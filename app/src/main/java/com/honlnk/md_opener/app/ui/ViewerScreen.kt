@@ -1,14 +1,16 @@
 package com.honlnk.md_opener.app.ui
 
 import android.content.Context
-import android.os.Bundle
-import android.os.CancellationSignal
-import android.os.ParcelFileDescriptor
+import android.net.Uri
 import android.print.PageRange
 import android.print.PrintAttributes
 import android.print.PrintDocumentAdapter
-import android.print.PrintManager
+import android.print.PrintDocumentInfo
+import android.os.ParcelFileDescriptor
 import android.webkit.WebView
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +71,18 @@ fun ViewerScreen(
     var searchQuery by remember { mutableStateOf("") }
     var searchCount by remember { mutableIntStateOf(0) }
 
+    // 「另存为 .pdf」选择器：选定位置后直接写入，取消则恢复折叠与主题
+    val pdfSaver = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/pdf")
+    ) { uri ->
+        val wv = webViewRef.value
+        if (wv == null || uri == null) {
+            wv?.evaluateJavascript("window.restoreAfterPrint && window.restoreAfterPrint()", null)
+            return@rememberLauncherForActivityResult
+        }
+        writePdfToFile(context, wv, uri, file.name)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,7 +105,12 @@ fun ViewerScreen(
                     IconButton(onClick = { showToc = true }) {
                         Icon(Icons.Filled.List, stringResource(R.string.toc))
                     }
-                    IconButton(onClick = { exportPdf(context, webViewRef.value, file.name) }) {
+                    IconButton(onClick = {
+                        // 先展开全部折叠、切浅色主题，再弹「另存为」；写入结束统一恢复
+                        webViewRef.value?.evaluateJavascript(
+                            "window.preparePrint && window.preparePrint()"
+                        ) { pdfSaver.launch(suggestedPdfName(file.name)) }
+                    }) {
                         Icon(Icons.Filled.PictureAsPdf, stringResource(R.string.export_pdf))
                     }
                 }
@@ -188,41 +207,67 @@ fun ViewerScreen(
     }
 }
 
-/** 通过系统打印框架导出 PDF：Chromium 打印引擎负责分页，用户在对话框选「保存为 PDF」 */
-private fun exportPdf(context: Context, webView: WebView?, fileName: String) {
-    if (webView == null) return
-    // 先展开全部折叠、切换浅色主题，再交给打印引擎（preparePrint 内部为同步 DOM 操作）
-    webView.evaluateJavascript("window.preparePrint && window.preparePrint()") {
-        val jobName = fileName.substringBeforeLast('.', fileName).ifBlank { "document" }
-        val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-        printManager.print(jobName, restoreAfterPrintAdapter(webView, jobName), null)
-    }
+/** 导出建议文件名：文档名去扩展名加 .pdf */
+private fun suggestedPdfName(fileName: String): String {
+    val base = fileName.substringBeforeLast('.', fileName).ifBlank { "document" }
+    return "$base.pdf"
 }
 
-/** 包装打印适配器：打印结束（含取消）后恢复折叠状态与主题 */
-private fun restoreAfterPrintAdapter(webView: WebView, jobName: String): PrintDocumentAdapter {
-    val base = webView.createPrintDocumentAdapter(jobName)
-    return object : PrintDocumentAdapter() {
-        override fun onLayout(
-            oldAttributes: PrintAttributes?,
-            newAttributes: PrintAttributes,
-            cancellationSignal: CancellationSignal?,
-            callback: PrintDocumentAdapter.LayoutResultCallback,
-            extras: Bundle?
-        ) = base.onLayout(oldAttributes, newAttributes, cancellationSignal, callback, extras)
+/**
+ * 绕开系统打印对话框，直接驱动打印适配器把 PDF 写入用户选择的位置：
+ * onLayout（A4 排版）→ onWrite（写入文件描述符）。页边距来自 viewer.html 的 @page 规则。
+ */
+private fun writePdfToFile(context: Context, webView: WebView, uri: Uri, fileName: String) {
+    val jobName = fileName.substringBeforeLast('.', fileName).ifBlank { "document" }
+    val adapter = webView.createPrintDocumentAdapter(jobName)
+    val attributes = PrintAttributes.Builder()
+        .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+        .setResolution(PrintAttributes.Resolution("pdf", "pdf", 300, 300))
+        .setColorMode(PrintAttributes.COLOR_MODE_COLOR)
+        .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+        .build()
 
-        override fun onWrite(
-            pages: Array<out PageRange>?,
-            destination: ParcelFileDescriptor,
-            cancellationSignal: CancellationSignal?,
-            callback: PrintDocumentAdapter.WriteResultCallback
-        ) = base.onWrite(pages, destination, cancellationSignal, callback)
-
-        override fun onFinish() {
-            base.onFinish()
-            webView.post {
-                webView.evaluateJavascript("window.restoreAfterPrint && window.restoreAfterPrint()", null)
+    adapter.onLayout(null, attributes, null, object : PrintDocumentAdapter.LayoutResultCallback() {
+        override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
+            val pfd = try {
+                context.contentResolver.openFileDescriptor(uri, "rw")
+            } catch (_: Exception) {
+                null
             }
+            if (pfd == null) {
+                adapter.onFinish()
+                finishExport(context, webView, "PDF 保存失败：无法写入所选位置")
+                return
+            }
+            adapter.onWrite(
+                arrayOf(PageRange.ALL_PAGES), pfd, null,
+                object : PrintDocumentAdapter.WriteResultCallback() {
+                    override fun onWriteFinished(pages: Array<out PageRange>) {
+                        pfd.close()
+                        adapter.onFinish()
+                        finishExport(context, webView, "PDF 已保存")
+                    }
+
+                    override fun onWriteFailed(error: CharSequence?) {
+                        pfd.close()
+                        adapter.onFinish()
+                        finishExport(context, webView, "PDF 保存失败")
+                    }
+                }
+            )
         }
+
+        override fun onLayoutFailed(error: CharSequence?) {
+            adapter.onFinish()
+            finishExport(context, webView, "PDF 生成失败")
+        }
+    }, null)
+}
+
+/** 导出收尾：提示结果并恢复折叠状态与主题 */
+private fun finishExport(context: Context, webView: WebView, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    webView.post {
+        webView.evaluateJavascript("window.restoreAfterPrint && window.restoreAfterPrint()", null)
     }
 }

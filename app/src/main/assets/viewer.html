@@ -12,6 +12,8 @@
   img { max-width: 100%; height: auto; }
   img.broken { opacity: 0.25; }
   mark.md-hit { background: #ffe58a; color: inherit; border-radius: 2px; padding: 0 1px; }
+  /* 打印页边距：Chromium 打印引擎按此渲染，续页顶部不再贴边 */
+  @page { margin: 14mm 12mm; }
   @media print {
     /* 智能分页：整块元素尽量不跨页切断，标题不孤悬页尾 */
     blockquote, table, tr, pre, .callout, details, figure, img { break-inside: avoid; page-break-inside: avoid; }
@@ -19,6 +21,8 @@
     p, li { orphans: 3; widows: 3; }
     /* 屏幕上靠横向滚动查看的长代码行，在纸面上改为换行，避免被截断 */
     pre { white-space: pre-wrap; word-break: break-all; }
+    /* markdown ---（hr）在 PDF 中作为分页符，线条本身隐藏 */
+    hr { visibility: hidden; break-after: page; page-break-after: always; border: 0; margin: 0; height: 0; }
   }
 </style>
 </head>
