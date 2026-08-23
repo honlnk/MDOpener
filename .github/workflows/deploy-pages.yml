@@ -1,0 +1,44 @@
+# 门户页部署到 GitHub Pages（docs/ 目录为纯静态站）
+# 推送 v* tag（App 发版）或 site-* tag（仅官网更新）时发布，也可手动触发。
+#
+# 前置：仓库 Settings → Pages → Source 选择 "GitHub Actions"；
+#       自定义域名 mdopener.honlnk.com 由 docs/CNAME 声明，
+#       DNS 添加 CNAME 记录指向 honlnk.github.io。
+
+name: Deploy Pages
+
+on:
+  push:
+    tags: ['v*', 'site-*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>手机打开 Markdown 文件 — MD Opener 安卓 Markdown 查看器（免费·离线·开源）</title>
+  <meta name="description" content="在手机上预览 Markdown 不再是乱码。MD Opener 是一款轻量的安卓 Markdown 查看器：文件管理器、微信、QQ 里点开 .md 文件即可阅读，支持目录跳转、全文搜索、代码高亮、导出 PDF。无广告、不联网、完全免费开源。" />
+  <meta name="keywords" content="手机打开markdown,手机预览markdown,安卓markdown查看器,markdown阅读器安卓,md文件怎么打开,手机看md文件,markdown转pdf,微信打开md,QQ打开markdown,离线markdown阅读" />
+  <meta name="author" content="honlnk" />
+  <link rel="canonical" href="https://mdopener.honlnk.com/" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="MD Opener" />
+  <meta property="og:title" content="手机打开 Markdown 文件 — MD Opener 安卓 Markdown 查看器" />
+  <meta property="og:description" content="点开 .md 文件即可阅读：目录、搜索、代码高亮、导出 PDF。无广告、不联网、免费开源。" />
+  <meta property="og:url" content="https://mdopener.honlnk.com/" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="手机打开 Markdown 文件 — MD Opener 安卓 Markdown 查看器" />
+  <meta name="twitter:description" content="点开 .md 文件即可阅读：目录、搜索、代码高亮、导出 PDF。无广告、不联网、免费开源。" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23A65A2E'/%3E%3Cpath d='M22 30 Q22 24 28 24 H44 L50 31 H72 Q78 31 78 37 V70 Q78 76 72 76 H28 Q22 76 22 70 Z' fill='%23FBF8F1'/%3E%3Cpath d='M32 44 L40 54 L32 64' stroke='%23A65A2E' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M48 64 H68' stroke='%23A65A2E' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+  <!-- 结构化数据：应用本体 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MD Opener",
+    "operatingSystem": "ANDROID",
+    "applicationCategory": "UtilitiesApplication",
+    "softwareVersion": "1.1.1",
+    "inLanguage": "zh-CN",
+    "description": "轻量的安卓 Markdown 查看器：点开 .md 文件即可阅读，支持目录、搜索、代码高亮、导出 PDF，无广告、不联网、开源免费。",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+    "author": { "@type": "Person", "name": "honlnk" },
+    "license": "https://opensource.org/licenses/MIT",
+    "downloadUrl": "https://github.com/honlnk/MDOpener/releases/latest",
+    "featureList": "Markdown 渲染,目录跳转,全文搜索,代码高亮,导出 PDF,GBK 编码识别,相对图片解析,深色模式"
+  }
+  </script>
+  <!-- 结构化数据：FAQ（覆盖长尾搜索） -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "手机怎么打开 .md 文件？",
+        "acceptedAnswer": { "@type": "Answer", "text": "安卓系统本身不识别 .md 文件。安装 MD Opener 后，在任意文件管理器里直接点击 .md / .markdown / .mdown 文件，选择用 MD Opener 打开，即可看到排版好的正文，无需导入或转换。" }
+      },
+      {
+        "@type": "Question",
+        "name": "微信、QQ 里收到的 Markdown 文件怎么看？",
+        "acceptedAnswer": { "@type": "Answer", "text": "把文件转存到手机存储（或用文件管理器进入微信/QQ 的下载目录），点击后选择 MD Opener 打开即可。纯文本内容也可以直接用系统「分享」发给 MD Opener 渲染。" }
+      },
+      {
+        "@type": "Question",
+        "name": "MD Opener 收费吗？有广告吗？",
+        "acceptedAnswer": { "@type": "Answer", "text": "完全免费，MIT 协议开源。应用没有广告，也没有申请联网权限，所有渲染都在手机本地完成。" }
+      },
+      {
+        "@type": "Question",
+        "name": "支持把 Markdown 导出成 PDF 吗？",
+        "acceptedAnswer": { "@type": "Answer", "text": "支持。可选 A4/A5/B5/Letter/Legal 纸张，导出的 PDF 文字为矢量可选中，可保留整页背景色，还支持用 --- 分割线强制分页。" }
+      },
+      {
+        "@type": "Question",
+        "name": "中文 Markdown 文件打开是乱码怎么办？",
+        "acceptedAnswer": { "@type": "Answer", "text": "MD Opener 内置编码检测：自动识别 UTF-8 与 GBK/GB2312（GB18030）编码的文件，老文档也能正常显示，无需手动转码。" }
+      },
+      {
+        "@type": "Question",
+        "name": "最低支持什么安卓版本？",
+        "acceptedAnswer": { "@type": "Answer", "text": "Android 7.0（API 24）及以上，覆盖绝大多数在用设备。" }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #FBF8F1;
+      --bg-soft: #F4EFE3;
+      --bg-code: #F1EBDD;
+      --border: #E7E0D0;
+      --text: #33302A;
+      --text-soft: #6A655A;
+      --heading: #211E19;
+      --accent: #A65A2E;
+      --accent-soft: #F0E0BF;
+      --green: #2e9e6b;
+      --shadow: 0 1px 3px rgba(51,48,42,.05), 0 10px 30px rgba(51,48,42,.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1B1916;
+        --bg-soft: #232019;
+        --bg-code: #26221C;
+        --border: #38332A;
+        --text: #D9D3C4;
+        --text-soft: #9A9486;
+        --heading: #ECE6D7;
+        --accent: #D6A878;
+        --accent-soft: #3A3128;
+        --green: #7dc79c;
+        --shadow: 0 1px 3px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 880px; margin: 0 auto; padding: 0 22px; }
+
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 54px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--heading); }
+    .brand img { width: 26px; height: 26px; }
+    .nav-links { display: flex; gap: 18px; font-size: 14px; }
+    .nav-links a { color: var(--text-soft); }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* Hero */
+    .hero { padding: 64px 0 56px; text-align: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      border-radius: 999px; padding: 4px 14px; margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      line-height: 1.25; color: var(--heading);
+      margin: 0 0 16px; font-weight: 800; letter-spacing: .5px;
+    }
+    .hero h1 .accent { color: var(--accent); }
+    .hero p.sub { font-size: 17px; color: var(--text-soft); max-width: 620px; margin: 0 auto 30px; }
+    .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border-radius: 12px; font-size: 16px; font-weight: 600;
+      border: 1px solid var(--border); transition: transform .15s, box-shadow .15s;
+    }
+    .btn:hover { text-decoration: none; transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn-primary { background: var(--accent); color: #FBF8F1; border-color: transparent; }
+    .btn-primary:hover { color: #FBF8F1; }
+    .btn-ghost { color: var(--text); background: var(--bg); }
+    .hero-meta { margin-top: 18px; font-size: 13px; color: var(--text-soft); }
+
+    /* 通用 section */
+    section { padding: 52px 0; border-top: 1px solid var(--border); }
+    .section-title { font-size: 26px; font-weight: 700; color: var(--heading); margin: 0 0 8px; }
+    .section-desc { color: var(--text-soft); margin: 0 0 28px; max-width: 640px; }
+
+    /* 痛点对照 */
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .compare { grid-template-columns: 1fr; } }
+    .compare-card {
+      border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px;
+      background: var(--bg-soft);
+    }
+    .compare-card .tag { font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+    .compare-card.bad .tag { color: #d9534f; }
+    .compare-card.good .tag { color: var(--green); }
+    .compare-card pre {
+      margin: 10px 0 0; padding: 14px; border-radius: 10px; overflow-x: auto;
+      background: var(--bg-code); color: var(--text);
+      font-family: "SFMono-Regular", "JetBrains Mono", Consolas, Menlo, monospace;
+      font-size: 12.5px; line-height: 1.6; white-space: pre-wrap;
+    }
+
+    /* 功能 */
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 760px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .feature-grid { grid-template-columns: 1fr; } }
+    .feature {
+      border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+      background: var(--bg);
+    }
+    .feature .ico { font-size: 22px; }
+    .feature h3 { margin: 8px 0 6px; font-size: 15.5px; color: var(--heading); }
+    .feature p { margin: 0; font-size: 13.5px; color: var(--text-soft); line-height: 1.65; }
+
+    /* 步骤 */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: step; }
+    @media (max-width: 640px) { .steps { grid-template-columns: 1fr; } }
+    .step { border: 1px solid var(--border); border-radius: 14px; padding: 20px; background: var(--bg-soft); position: relative; }
+    .step .num {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent); color: #FBF8F1; font-weight: 700; font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .step h3 { margin: 0 0 6px; font-size: 16px; color: var(--heading); }
+    .step p { margin: 0; font-size: 13.5px; color: var(--text-soft); }
+
+    /* FAQ */
+    details {
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 18px; margin-bottom: 10px; background: var(--bg);
+    }
+    details summary { cursor: pointer; font-weight: 600; color: var(--heading); font-size: 15.5px; }
+    details p { margin: 10px 0 0; color: var(--text-soft); font-size: 14.5px; }
+
+    footer { border-top: 1px solid var(--border); padding: 30px 0 44px; color: var(--text-soft); font-size: 13.5px; }
+    footer .container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#A65A2E"/><path d="M22 30 Q22 24 28 24 H44 L50 31 H72 Q78 31 78 37 V70 Q78 76 72 76 H28 Q22 76 22 70 Z" fill="#FBF8F1"/><path d="M32 44 L40 54 L32 64" stroke="#A65A2E" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M48 64 H68" stroke="#A65A2E" stroke-width="5" stroke-linecap="round"/></svg>
+      MD Opener
+    </div>
+    <nav class="nav-links">
+      <a href="#features">功能</a>
+      <a href="#how">怎么用</a>
+      <a href="#faq">常见问题</a>
+      <a href="https://github.com/honlnk/MDOpener" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero container">
+    <div class="hero-badge">📄 开源免费 · v<span id="ver">1.1.1</span> · Android 7.0+</div>
+    <h1>手机打开 Markdown 文件，<br/>就像翻开的<span class="accent">一本书</span></h1>
+    <p class="sub">安卓系统本身不认识 .md 文件——点开要么报错，要么是一屏 <code># *</code> 符号。装上 MD Opener，在文件管理器里直接点开 .md，即可阅读排版好的正文：目录跳转、全文搜索、代码高亮、一键导出 PDF。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/honlnk/MDOpener/releases/latest" target="_blank" rel="noopener">⬇️ 下载 APK（免费）</a>
+      <a class="btn btn-ghost" href="https://github.com/honlnk/MDOpener" target="_blank" rel="noopener">⭐ 查看源码</a>
+    </div>
+    <p class="hero-meta">无广告 · 无联网权限 · 无后台行为 · MIT 开源 · 安装包约 3MB</p>
+  </div>
+
+  <section id="why">
+    <div class="container">
+      <h2 class="section-title">为什么需要它？</h2>
+      <p class="section-desc">微信、QQ 里收到 .md 文件，或者下载了一份 Markdown 写的说明书——没有装对应用，你看到的只能是这样：</p>
+      <div class="compare">
+        <div class="compare-card bad">
+          <span class="tag">✗ 普通文本编辑器打开</span>
+          <pre>## 安装步骤
+1. 下载 **release** 包
+&gt; 注意：需 Android 7.0+
+`adb install app.apk`</pre>
+        </div>
+        <div class="compare-card good">
+          <span class="tag">✓ MD Opener 打开</span>
+          <pre style="font-family:inherit; font-size:14px;">
+<b style="font-size:16px;">安装步骤</b>
+1. 下载 <b>release</b> 包
+
+<span style="border-left:3px solid #C9BBA0; padding-left:8px; color:var(--text-soft);">注意：需 Android 7.0+</span>
+<span style="background:var(--bg-code); padding:1px 6px; border-radius:4px; font-size:12.5px;">adb install app.apk</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title">功能一览</h2>
+      <p class="section-desc">只做一件事：把 Markdown 漂亮地显示出来。</p>
+      <div class="feature-grid">
+        <div class="feature"><div class="ico">📂</div><h3>系统级文件关联</h3><p>.md / .markdown / .mdown 一键打开，支持各类文件管理器与微信、QQ 转存文件</p></div>
+        <div class="feature"><div class="ico">📑</div><h3>目录跳转</h3><p>自动提取标题生成目录，长文档点击直达章节</p></div>
+        <div class="feature"><div class="ico">🔍</div><h3>页内搜索</h3><p>实时高亮匹配文字，显示命中数量</p></div>
+        <div class="feature"><div class="ico">🧩</div><h3>代码高亮</h3><p>GitHub 风格双主题，浅色 / 深色自动切换</p></div>
+        <div class="feature"><div class="ico">📄</div><h3>导出 PDF</h3><p>A4/A5/B5/Letter/Legal，矢量文字可选中，支持 --- 强制分页</p></div>
+        <div class="feature"><div class="ico">🌏</div><h3>编码自动检测</h3><p>UTF-8 / GBK / GB2312 老文件打开不乱码</p></div>
+        <div class="feature"><div class="ico">🖼️</div><h3>相对图片解析</h3><p>正确显示 ![](./images/a.png) 这类同目录引用</p></div>
+        <div class="feature"><div class="ico">💬</div><h3>GitHub 提示框</h3><p>支持 &gt; [!NOTE] 等 callout 语法渲染</p></div>
+        <div class="feature"><div class="ico">🎨</div><h3>暖纸 / 深炭主题</h3><p>跟随系统切换，字号、页宽均可自定义</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="container">
+      <h2 class="section-title">怎么用？三步开始</h2>
+      <p class="section-desc">装好后无需任何设置，它就像系统自带的阅读器一样工作。</p>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><h3>下载安装</h3><p>从 GitHub Releases 下载 APK 安装（约 3MB）。签名固定，升级可直接覆盖安装。</p></div>
+        <div class="step"><div class="num">2</div><h3>点开任意 .md 文件</h3><p>在文件管理器里点击 .md 文件，选「用 MD Opener 打开」并设为默认。微信/QQ 文件先转存到手机。</p></div>
+        <div class="step"><div class="num">3</div><h3>阅读、搜索、导出</h3><p>呼出目录跳转章节，页内搜索关键词，需要打印或分享时一键导出 PDF。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title">常见问题</h2>
+      <p class="section-desc">关于在手机上查看 Markdown 文件，最常被问到的问题。</p>
+      <details open>
+        <summary>手机怎么打开 .md 文件？</summary>
+        <p>安卓系统本身不识别 .md 文件。安装 MD Opener 后，在任意文件管理器里直接点击 .md / .markdown / .mdown 文件，选择用 MD Opener 打开，即可看到排版好的正文，无需导入或转换。</p>
+      </details>
+      <details>
+        <summary>微信、QQ 里收到的 Markdown 文件怎么看？</summary>
+        <p>先把文件转存到手机存储（或用文件管理器进入微信/QQ 的下载目录），点击后选择 MD Opener 打开即可。纯文本内容也可以直接用系统「分享」发给 MD Opener 渲染。</p>
+      </details>
+      <details>
+        <summary>MD Opener 收费吗？有广告吗？</summary>
+        <p>完全免费，MIT 协议开源。应用没有广告，也没有申请联网权限，所有渲染都在手机本地完成。</p>
+      </details>
+      <details>
+        <summary>支持把 Markdown 导出成 PDF 吗？</summary>
+        <p>支持。可选 A4/A5/B5/Letter/Legal 纸张，导出的 PDF 文字为矢量可选中，可保留整页背景色，还支持用 --- 分割线强制分页。</p>
+      </details>
+      <details>
+        <summary>中文 Markdown 文件打开是乱码怎么办？</summary>
+        <p>MD Opener 内置编码检测：自动识别 UTF-8 与 GBK/GB2312（GB18030）编码的文件，老文档也能正常显示，无需手动转码。</p>
+      </details>
+      <details>
+        <summary>最低支持什么安卓版本？</summary>
+        <p>Android 7.0（API 24）及以上，覆盖绝大多数在用设备。</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div>© 2026 MD Opener · MIT 开源 · <a href="https://github.com/honlnk/MDOpener" target="_blank" rel="noopener">GitHub</a></div>
+    <div><a href="https://github.com/honlnk/MDOpener/releases/latest" target="_blank" rel="noopener">下载最新版</a> · <a href="https://github.com/honlnk/MDOpener/issues" target="_blank" rel="noopener">反馈问题</a></div>
+  </div>
+</footer>
+
+<script>
+  // 显示 GitHub 最新版本号（失败则保留 HTML 内置版本）
+  fetch('https://api.github.com/repos/honlnk/MDOpener/releases/latest')
+    .then(r => r.ok ? r.json() : null)
+    .then(j => { if (j && j.tag_name) document.getElementById('ver').textContent = j.tag_name.replace(/^v/, ''); })
+    .catch(() => {});
+</script>
+</body>
+</html>
