@@ -34,10 +34,14 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      # docs/ 同时存放开发笔记（*.md），仅部署站点文件
+      - name: Stage site
+        run: rsync -a --exclude='*.md' docs/ _site/
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
