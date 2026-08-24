@@ -1,4 +1,6 @@
 <resources>
     <color name="ic_launcher_background">#A65A2E</color>
     <color name="accent">#A65A2E</color>
+    <color name="warm_paper">#FBF8F1</color>
+    <color name="charcoal">#1B1916</color>
 </resources>
