@@ -196,7 +196,8 @@
       border: 1px solid var(--border); border-radius: 14px; padding: 18px;
       background: var(--bg);
     }
-    .feature .ico { font-size: 22px; }
+    .feature .ico { color: var(--accent); }
+    .feature .ico svg { display: block; }
     .feature h3 { margin: 8px 0 6px; font-size: 15.5px; color: var(--heading); }
     .feature p { margin: 0; font-size: 13.5px; color: var(--text-soft); line-height: 1.65; }
 
@@ -244,12 +245,12 @@
 
 <main>
   <div class="hero container">
-    <div class="hero-badge">📄 开源免费 · v<span id="ver">1.1.1</span> · Android 7.0+</div>
+    <div class="hero-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>开源免费 · v<span id="ver">1.1.1</span> · Android 7.0+</div>
     <h1>手机打开 Markdown 文件，<br/>就像翻开的<span class="accent">一本书</span></h1>
     <p class="sub">安卓系统本身不认识 .md 文件——点开要么报错，要么是一屏 <code># *</code> 符号。装上 MD Opener，在文件管理器里直接点开 .md，即可阅读排版好的正文：目录跳转、全文搜索、代码高亮、一键导出 PDF。</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="https://github.com/honlnk/MDOpener/releases/latest" target="_blank" rel="noopener">⬇️ 下载 APK（免费）</a>
-      <a class="btn btn-ghost" href="https://github.com/honlnk/MDOpener" target="_blank" rel="noopener">⭐ 查看源码</a>
+      <a class="btn btn-primary" href="https://github.com/honlnk/MDOpener/releases/latest" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>下载 APK（免费）</a>
+      <a class="btn btn-ghost" href="https://github.com/honlnk/MDOpener" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>查看源码</a>
     </div>
     <p class="hero-meta">无广告 · 无联网权限 · 无后台行为 · MIT 开源 · 安装包约 3MB</p>
   </div>
@@ -284,15 +285,15 @@
       <h2 class="section-title">功能一览</h2>
       <p class="section-desc">只做一件事：把 Markdown 漂亮地显示出来。</p>
       <div class="feature-grid">
-        <div class="feature"><div class="ico">📂</div><h3>系统级文件关联</h3><p>.md / .markdown / .mdown 一键打开，支持各类文件管理器与微信、QQ 转存文件</p></div>
-        <div class="feature"><div class="ico">📑</div><h3>目录跳转</h3><p>自动提取标题生成目录，长文档点击直达章节</p></div>
-        <div class="feature"><div class="ico">🔍</div><h3>页内搜索</h3><p>实时高亮匹配文字，显示命中数量</p></div>
-        <div class="feature"><div class="ico">🧩</div><h3>代码高亮</h3><p>GitHub 风格双主题，浅色 / 深色自动切换</p></div>
-        <div class="feature"><div class="ico">📄</div><h3>导出 PDF</h3><p>A4/A5/B5/Letter/Legal，矢量文字可选中，支持 --- 强制分页</p></div>
-        <div class="feature"><div class="ico">🌏</div><h3>编码自动检测</h3><p>UTF-8 / GBK / GB2312 老文件打开不乱码</p></div>
-        <div class="feature"><div class="ico">🖼️</div><h3>相对图片解析</h3><p>正确显示 ![](./images/a.png) 这类同目录引用</p></div>
-        <div class="feature"><div class="ico">💬</div><h3>GitHub 提示框</h3><p>支持 &gt; [!NOTE] 等 callout 语法渲染</p></div>
-        <div class="feature"><div class="ico">🎨</div><h3>暖纸 / 深炭主题</h3><p>跟随系统切换，字号、页宽均可自定义</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><h3>系统级文件关联</h3><p>.md / .markdown / .mdown 一键打开，支持各类文件管理器与微信、QQ 转存文件</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg></div><h3>目录跳转</h3><p>自动提取标题生成目录，长文档点击直达章节</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><h3>页内搜索</h3><p>实时高亮匹配文字，显示命中数量</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg></div><h3>代码高亮</h3><p>GitHub 风格双主题，浅色 / 深色自动切换</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></div><h3>导出 PDF</h3><p>A4/A5/B5/Letter/Legal，矢量文字可选中，支持 --- 强制分页</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><h3>编码自动检测</h3><p>UTF-8 / GBK / GB2312 老文件打开不乱码</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><h3>相对图片解析</h3><p>正确显示 ![](./images/a.png) 这类同目录引用</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h3>GitHub 提示框</h3><p>支持 &gt; [!NOTE] 等 callout 语法渲染</p></div>
+        <div class="feature"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20z" fill="currentColor" stroke="none"/></svg></div><h3>暖纸 / 深炭主题</h3><p>跟随系统切换，字号、页宽均可自定义</p></div>
       </div>
     </div>
   </section>
