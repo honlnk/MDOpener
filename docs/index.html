@@ -197,6 +197,33 @@
     .btn-tile.btn-primary .tile-sub { color: rgba(251,248,241,.82); }
     .btn-tile.btn-ghost { color: var(--text); background: var(--bg); }
     .btn-tile.btn-pro { color: var(--accent); background: var(--bg); border-color: var(--accent); }
+
+    /* 未上线平台卡片（如鸿蒙）：禁用态 + 松弛感 hover 提示气泡 */
+    .btn-tile-disabled {
+      position: relative; opacity: .55; cursor: help;
+    }
+    .btn-tile-disabled:hover, .btn-tile-disabled:focus {
+      transform: none; box-shadow: none; outline: none;
+    }
+    .btn-tile-disabled:focus-visible { border-color: var(--accent); }
+    .tile-tip {
+      position: absolute; bottom: calc(100% + 10px); left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      width: 244px; padding: 10px 12px; border-radius: 10px;
+      background: var(--heading); color: var(--bg);
+      font-size: 12px; font-weight: 500; line-height: 1.8; text-align: center;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease, visibility .25s;
+      box-shadow: var(--shadow); z-index: 20;
+    }
+    .tile-tip::after {
+      content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      border: 6px solid transparent; border-top-color: var(--heading);
+    }
+    .btn-tile-disabled:hover .tile-tip,
+    .btn-tile-disabled:focus .tile-tip {
+      opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+    }
     .hero-meta { margin-top: 18px; font-size: 13px; color: var(--text-soft); }
 
     /* 通用 section */
@@ -355,6 +382,12 @@
         <span class="tile-title">iPhone / iPad</span>
         <span class="tile-sub">侧载版 IPA</span>
       </a>
+      <div class="btn-tile btn-ghost btn-tile-disabled" role="button" aria-disabled="true" tabindex="0" aria-label="鸿蒙 HarmonyOS：开发中，敬请期待">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12C12 8 14.5 4.5 19 4c-.2 4.4-3 7.4-7 8z"/><path d="M12 12C12 8 14.5 4.5 19 4c-.2 4.4-3 7.4-7 8z" transform="rotate(90 12 12)"/><path d="M12 12C12 8 14.5 4.5 19 4c-.2 4.4-3 7.4-7 8z" transform="rotate(180 12 12)"/><path d="M12 12C12 8 14.5 4.5 19 4c-.2 4.4-3 7.4-7 8z" transform="rotate(270 12 12)"/></svg>
+        <span class="tile-title">鸿蒙</span>
+        <span class="tile-sub">敬请期待</span>
+        <span class="tile-tip">等作者买了华为手机就开工 🐟<br/>有华为设备？欢迎提 PR 提前解锁 🚀</span>
+      </div>
       <a class="btn-tile btn-pro" href="#pro" aria-label="专业版 ¥5">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         <span class="tile-title">专业版</span>
