@@ -181,6 +181,22 @@
     .btn-primary { background: var(--accent); color: #FBF8F1; border-color: transparent; }
     .btn-primary:hover { color: #FBF8F1; }
     .btn-ghost { color: var(--text); background: var(--bg); }
+
+    /* Hero 方块下载按钮：平台图标竖排卡片，后续追加鸿蒙等平台仍可单行容纳 */
+    .btn-tile {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      width: 126px; min-height: 118px; padding: 14px 8px;
+      border-radius: 16px; text-align: center; font-size: 14.5px; font-weight: 700;
+      border: 1px solid var(--border); transition: transform .15s, box-shadow .15s;
+      cursor: pointer;
+    }
+    .btn-tile:hover { text-decoration: none; transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn-tile .tile-sub { font-size: 11.5px; font-weight: 500; color: var(--text-soft); }
+    .btn-tile.btn-primary { background: var(--accent); color: #FBF8F1; border-color: transparent; }
+    .btn-tile.btn-primary:hover { color: #FBF8F1; }
+    .btn-tile.btn-primary .tile-sub { color: rgba(251,248,241,.82); }
+    .btn-tile.btn-ghost { color: var(--text); background: var(--bg); }
+    .btn-tile.btn-pro { color: var(--accent); background: var(--bg); border-color: var(--accent); }
     .hero-meta { margin-top: 18px; font-size: 13px; color: var(--text-soft); }
 
     /* 通用 section */
@@ -329,10 +345,26 @@
     <h1>手机打开 Markdown 文件，<br/>就像翻开的<span class="accent">一本书</span></h1>
     <p class="sub">安卓系统本身不认识 .md 文件——点开要么报错，要么是一屏 <code># *</code> 符号。装上 MD Opener，在文件管理器里直接点开 .md，即可阅读排版好的正文：目录跳转、全文搜索、代码高亮、一键导出 PDF。</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="https://github.com/honlnk/MDOpener/releases/latest/download/MD-Opener-latest.apk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>安卓 · 下载 APK</a>
-      <a class="btn btn-ghost" href="https://github.com/honlnk/MDOpener/releases/latest/download/MD-Opener-ios-latest.ipa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>iPhone / iPad · 侧载版 IPA</a>
-      <a class="btn btn-pro" href="#pro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>专业版 · ¥5</a>
-      <a class="btn btn-ghost" href="https://github.com/honlnk/MDOpener/releases" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>全部版本</a>
+      <a class="btn-tile btn-primary" href="https://github.com/honlnk/MDOpener/releases/latest/download/MD-Opener-latest.apk" aria-label="安卓：下载 APK">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-1.44-.66-3.07-1.03-4.47-1.03s-3.03.37-4.47 1.03L5.65 5.67c-.19-.29-.58-.38-.87-.2-.28.18-.37.54-.22.83L6.4 9.48C3.3 11.25 1.28 14.44 1 18h22c-.28-3.56-2.3-6.75-5.6-8.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/></svg>
+        <span class="tile-title">安卓</span>
+        <span class="tile-sub">下载 APK</span>
+      </a>
+      <a class="btn-tile btn-ghost" href="https://github.com/honlnk/MDOpener/releases/latest/download/MD-Opener-ios-latest.ipa" aria-label="iPhone / iPad：下载侧载版 IPA">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.03 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+        <span class="tile-title">iPhone / iPad</span>
+        <span class="tile-sub">侧载版 IPA</span>
+      </a>
+      <a class="btn-tile btn-pro" href="#pro" aria-label="专业版 ¥5">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="tile-title">专业版</span>
+        <span class="tile-sub">¥5</span>
+      </a>
+      <a class="btn-tile btn-ghost" href="https://github.com/honlnk/MDOpener/releases" target="_blank" rel="noopener" aria-label="全部版本">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+        <span class="tile-title">全部版本</span>
+        <span class="tile-sub">GitHub Releases</span>
+      </a>
     </div>
     <p class="hero-meta">无广告 · 无联网权限 · 无后台行为 · MIT 开源 · 安卓约 1.3MB / iOS 约 0.3MB</p>
   </div>
