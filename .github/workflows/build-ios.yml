@@ -2,8 +2,9 @@ name: Build IPA
 
 # iOS 构建交付链路（无签名 IPA，交付后由用户侧重签侧载，见 plans/ios-v1.md §3.4）：
 # 1. push 到 main / dev 且 ios/、web/ 有改动时构建验证（本机无 Xcode，所有编译验证依赖 CI）。
-# 2. 发布 ios-v* tag 的 Release（published）时构建并附 MD-Opener-ios-<tag>.ipa。
-#    仅作为 prerelease 里程碑使用，不进入 releases/latest（官网 APK 直链依赖 latest，勿改成正式版）。
+# 2. 发布正式 Release（v* tag，published）时构建并附 MD-Opener-ios-<tag>.ipa 与
+#    MD-Opener-ios-latest.ipa（官网直链用，指向最新非 prerelease 的 Release）。
+#    双端与安卓 build.yml 使用同一 tag 同步发版；历史 ios-v* 预发布轨道已废弃。
 on:
   push:
     branches:
@@ -20,7 +21,7 @@ on:
 
 jobs:
   build:
-    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'ios-')
+    if: github.event_name != 'release' || !startsWith(github.event.release.tag_name, 'ios-')
     runs-on: macos-15   # 固定镜像版本，随其附带的 Xcode 大版本一同锁定；升级须显式提交
     permissions:
       contents: write  # release 事件时上传资产需要写权限
@@ -74,6 +75,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          VER="${TAG#ios-}"
-          cp MD-Opener-unsigned.ipa "MD-Opener-ios-${VER}.ipa"
-          gh release upload "$TAG" "MD-Opener-ios-${VER}.ipa" --clobber
+          cp MD-Opener-unsigned.ipa "MD-Opener-ios-${TAG}.ipa"
+          cp MD-Opener-unsigned.ipa MD-Opener-ios-latest.ipa
+          gh release upload "$TAG" "MD-Opener-ios-${TAG}.ipa" MD-Opener-ios-latest.ipa --clobber

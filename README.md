@@ -26,11 +26,11 @@
 
 ## 下载
 
-在 [GitHub Releases](https://github.com/honlnk/MDOpener/releases) 下载最新 APK，签名固定，可直接覆盖安装。
+在 [GitHub Releases](https://github.com/honlnk/MDOpener/releases) 下载最新 APK，签名固定，可直接覆盖安装。安卓与 iOS 同 tag 同步发版（如 `v1.2.5`），两个平台的安装包附在同一次 Release 里。
 
 ### iOS（侧载版）
 
-iOS 版不走 App Store，面向侧载场景：从 [Releases](https://github.com/honlnk/MDOpener/releases) 的 `ios-v*` 预发布版（或 [Actions](https://github.com/honlnk/MDOpener/actions/workflows/build-ios.yml) 运行页产物）下载 `MD-Opener-ios-*.ipa`，用 AltStore / Sideloadly / TrollStore 等工具以自己的 Apple ID 重签安装。功能与安卓版对齐；相对路径图片因 iOS 沙盒需在提示时授权所在文件夹（仅需一次）。
+iOS 版不走 App Store，面向侧载场景：从 [Releases](https://github.com/honlnk/MDOpener/releases) 下载正式版附带的 `MD-Opener-ios-v*.ipa`（官网「iPhone / iPad」按钮直链 `MD-Opener-ios-latest.ipa`，始终指向最新正式版），用 AltStore / Sideloadly / TrollStore 等工具以自己的 Apple ID 重签安装。功能与安卓版对齐；相对图片因 iOS 沙盒需在提示时授权所在文件夹（仅需一次）。
 
 ## 技术栈
 
@@ -83,11 +83,11 @@ iOS 版不走 App Store，面向侧载场景：从 [Releases](https://github.com
 
 要求：JDK 17+、Android SDK 34。
 
-> 官网「下载 APK」按钮直链指向 `releases/latest/download/MD-Opener-latest.apk`，始终落到最新 Release。发布 Release 时 CI 会自动附上 `MD-Opener-<tag>.apk` 与 `MD-Opener-latest.apk` 两个资产，只需写好说明点发布；旧 Release 里的同名资产无需删除。
+> 官网「安卓」按钮直链指向 `releases/latest/download/MD-Opener-latest.apk`，「iPhone / iPad」按钮直链指向 `MD-Opener-ios-latest.ipa`，均始终落到最新 Release。发布 Release 时 CI 会自动附上 `MD-Opener-<tag>.apk`、`MD-Opener-latest.apk`、`MD-Opener-ios-<tag>.ipa` 与 `MD-Opener-ios-latest.ipa` 四个资产，只需写好说明点发布；旧 Release 里的同名资产无需删除。
 
 ## 版本
 
-当前版本 **1.2.4**（versionCode 12）。
+当前版本 **1.2.5**（versionCode 13；iOS build 2）。双端版本号同步，`ios-v*` 预发布轨道已废弃，统一走 `v*` 正式 Release。
 
 ## License
 
